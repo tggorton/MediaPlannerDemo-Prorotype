@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/assets/kerv-logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- DM Sans is still loaded for the existing globals.css that the vanilla v2 page reads. -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+    <!-- Open Sans is required by the KERV theme kit. -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <title>KERV: Media Planner Tool</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!--
+      Legacy vanilla code for Media Planner (v2), loaded as global scripts so
+      its functions register on `window` (preserving the inline onclick handlers
+      it generates). Will be incrementally replaced by real React components.
+    -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="/legacy/sdt-styles.js"></script>
+    <!--
+      taxonomy-explorer.js and media-planner.js are loaded for the data
+      constants v2 reads from them (TX_CATEGORIES, TX_MOMENT_DATA, TX_MODAL_TABS,
+      INV_PROGRAMS). They also register render functions for those features, but
+      since the React app doesn't route to them, those are dormant.
+    -->
+    <script src="/legacy/taxonomy-explorer.js"></script>
+    <script src="/legacy/media-planner.js"></script>
+    <script src="/legacy/media-planner-v2.js"></script>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
