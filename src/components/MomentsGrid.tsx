@@ -45,27 +45,32 @@ declare global {
   }
 }
 
-const TV_QUERIES: Record<string, string> = {
-  'Family Dinner Time': 'family dinner tv show scene',
-  'Grocery Shopping': 'cooking show food network television host',
-  'Healthy Eating': 'cooking show kitchen television chef healthy',
-  'Meal Prep & Cooking': 'cooking show chef kitchen television',
-  'Fresh Produce': 'cooking show vegetables chef television',
-  'Weekend BBQ': 'outdoor cooking show bbq television',
-  'Quick & Easy Meals': 'cooking show recipe television host',
-  'Home Cooking': 'home cooking television show chef',
-  'Family Life': 'family television sitcom show scene',
-  'Snack & Entertaining': 'television show party entertaining scene',
-  'Budget Living': 'reality tv show home lifestyle',
-  'Lifestyle & Wellness': 'wellness lifestyle television show host',
-  'Food Discovery': 'food travel television show chef',
-  'Kids & Family': 'kids family television show scene',
-  'Community & Local': 'community television show neighborhood',
-  'Seasonal Celebrations': 'holiday television show celebration family',
+// Each moment maps to one of the bundled images in /public/assets/moments/.
+// Bundled (rather than fetched from Unsplash at runtime) so the demo is
+// self-contained on Vercel with no API key. Shared with the legacy media-plan
+// rail via window.MP2_MOMENT_IMAGES (see media-planner-v2.js).
+const MOMENT_IMAGES: Record<string, string> = {
+  'Family Dinner Time': 'family',
+  'Grocery Shopping': 'shopping',
+  'Healthy Eating': 'produce',
+  'Meal Prep & Cooking': 'cooking',
+  'Fresh Produce': 'produce',
+  'Weekend BBQ': 'meat',
+  'Quick & Easy Meals': 'cooking',
+  'Home Cooking': 'cooking',
+  'Family Life': 'family',
+  'Snack & Entertaining': 'shopping',
+  'Budget Living': 'grocery',
+  'Lifestyle & Wellness': 'produce',
+  'Food Discovery': 'grocery',
+  'Kids & Family': 'family',
+  'Community & Local': 'grocery',
+  'Seasonal Celebrations': 'family',
 };
 
-// Module-level cache so images survive grid remounts (type change / reset).
-const imageCache = new Map<string, string>();
+function momentImageSrc(name: string): string {
+  return `/assets/moments/${MOMENT_IMAGES[name] || 'cooking'}.jpg`;
+}
 
 const pillSx = (bg: string, border: string, color: string) => ({
   height: 18,
@@ -99,36 +104,20 @@ function SupplyChip({ type }: { type: MomentCardData['supplyType'] }) {
 }
 
 function MomentImage({ name }: { name: string }) {
-  const [src, setSrc] = useState<string | undefined>(() => imageCache.get(name));
-
-  useEffect(() => {
-    if (imageCache.has(name)) {
-      setSrc(imageCache.get(name));
-      return;
-    }
-    let alive = true;
-    const query = TV_QUERIES[name] || `${name} television show scene`;
-    fetch(`/api/unsplash?q=${encodeURIComponent(query)}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((data) => {
-        if (!data?.thumb || !alive) return;
-        imageCache.set(name, data.thumb);
-        setSrc(data.thumb);
-      })
-      .catch(() => {
-        /* keep placeholder */
-      });
-    return () => {
-      alive = false;
-    };
-  }, [name]);
+  const [failed, setFailed] = useState(false);
 
   return (
     <Box sx={{ position: 'absolute', inset: 0, bgcolor: 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-      {src ? (
-        <Box component="img" src={src} alt="" sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-      ) : (
+      {failed ? (
         <VideoLibraryIcon sx={{ fontSize: 22, color: 'var(--faint)', opacity: 0.4 }} />
+      ) : (
+        <Box
+          component="img"
+          src={momentImageSrc(name)}
+          alt=""
+          onError={() => setFailed(true)}
+          sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
       )}
     </Box>
   );

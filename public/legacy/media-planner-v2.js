@@ -1302,8 +1302,11 @@ function mp2Analyze() {
     + '</div>';
 
   var pct = 0; var stepIdx = 0; var scanPct = 0; var frameIdx = 0;
+  // TEMP (remove when asked): analysis sped up to ~10% of normal for quick
+  // testing — nothing is actually processed yet. REVERT: increment 4.5 -> 0.45
+  // and the final setTimeout 60 -> 600 (see below). See the processing-speed skill.
   var interval = setInterval(function() {
-    pct = Math.min(pct + 0.45, 100);
+    pct = Math.min(pct + 4.5, 100);    // TEMP: was 0.45
     scanPct = (scanPct + 3) % 100;
     var label = document.getElementById('tx2-progress-label');
     var pctEl = document.getElementById('tx2-progress-pct');
@@ -1334,7 +1337,7 @@ function mp2Analyze() {
     if (pct >= 100) {
       clearInterval(interval);
       if (scanLine) scanLine.style.display = 'none';
-      setTimeout(mp2ShowResults, 600);
+      setTimeout(mp2ShowResults, 60);    // TEMP: was 600
     }
   }, 40);
 }
@@ -4767,26 +4770,44 @@ function mp2RenderMomentsMediaPlan() {
     + '</div>'
     + '<button onclick="mp2SaveMomentsMediaPlan()" style="width:100%;height:34px;font-size:12px;font-weight:600;font-family:inherit;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;transition:opacity .13s" onmouseenter="this.style.opacity=\'.88\'" onmouseleave="this.style.opacity=\'1\'">Save Media Plan</button>'
     + '</div>';
-  // Fetch thumbnails for plan items async
+  // Set bundled thumbnails for plan items (local images, no API dependency).
   names.forEach(function(n) {
     var imgDiv = document.getElementById('mp2-plan-img-' + n.replace(/[^a-zA-Z0-9]/g, '-'));
     if (!imgDiv) return;
-    fetch('/api/unsplash?q=' + encodeURIComponent(n + ' tv show'))
-      .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
-      .then(function(data) {
-        if (!data.thumb) return;
-        var imgDiv2 = document.getElementById('mp2-plan-img-' + n.replace(/[^a-zA-Z0-9]/g, '-'));
-        if (!imgDiv2) return;
-        var img = new Image();
-        img.onload = function() {
-          imgDiv2.innerHTML = '';
-          var el = document.createElement('img');
-          el.src = data.thumb; el.style.cssText = 'width:100%;height:100%;object-fit:cover';
-          imgDiv2.appendChild(el);
-        };
-        img.src = data.thumb;
-      }).catch(function() {});
+    var img = new Image();
+    img.onload = function() {
+      imgDiv.innerHTML = '';
+      var el = document.createElement('img');
+      el.src = img.src; el.style.cssText = 'width:100%;height:100%;object-fit:cover';
+      imgDiv.appendChild(el);
+    };
+    img.src = mp2MomentImageSrc(n);
   });
+}
+
+// Bundled moment images (see /public/assets/moments/). Shared theme with the
+// React grid's MOMENT_IMAGES map (MomentsGrid.tsx). Self-contained so the demo
+// needs no Unsplash key on Vercel.
+var MP2_MOMENT_IMAGES = {
+  'Family Dinner Time': 'family',
+  'Grocery Shopping': 'shopping',
+  'Healthy Eating': 'produce',
+  'Meal Prep & Cooking': 'cooking',
+  'Fresh Produce': 'produce',
+  'Weekend BBQ': 'meat',
+  'Quick & Easy Meals': 'cooking',
+  'Home Cooking': 'cooking',
+  'Family Life': 'family',
+  'Snack & Entertaining': 'shopping',
+  'Budget Living': 'grocery',
+  'Lifestyle & Wellness': 'produce',
+  'Food Discovery': 'grocery',
+  'Kids & Family': 'family',
+  'Community & Local': 'grocery',
+  'Seasonal Celebrations': 'family'
+};
+function mp2MomentImageSrc(name) {
+  return '/assets/moments/' + (MP2_MOMENT_IMAGES[name] || 'cooking') + '.jpg';
 }
 
 function mp2ClearMomentSelection() {
