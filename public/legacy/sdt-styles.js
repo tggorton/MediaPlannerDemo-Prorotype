@@ -110,6 +110,25 @@ function sdtInjectStyles() {
       box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.05);
       padding: 20px;
     }
+    /* Collapsible media-planner header card */
+    .mp2-header-toggle { position: absolute; top: 14px; right: 18px; z-index: 1; border: none; background: none; cursor: pointer; color: var(--faint); padding: 4px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; transition: color .12s, background .12s; }
+    .mp2-header-toggle:hover { color: var(--text); background: var(--bg); }
+    .mp2-header-lead { display: flex; align-items: center; gap: 12px; min-width: 0; flex-wrap: wrap; padding-right: 36px; }
+    .mp2-header-inline { display: none; align-items: center; gap: 12px; font-size: 16px; font-weight: 500; color: var(--text); min-width: 0; }
+    .mp2-header-inline > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mp2-header-sep { color: rgba(0,0,0,0.26); font-weight: 400; }
+    #mp2-title-slot { padding-right: 40px; }
+    #mp2-title-slot .ptitle { transition: font-size .18s ease; }
+    /* Gap above the title only when a back link is present; without one the title
+       sits at the top of the card (like before the collapse feature). */
+    .mp2-header-hasback #mp2-title-slot:not(:empty) { margin-top: 14px; }
+    /* Collapsed WITH a back link: single row (back link + inline title), big title hidden. */
+    .mp2-header-hasback.mp2-header-collapsed #mp2-title-slot { display: none; }
+    .mp2-header-hasback.mp2-header-collapsed .mp2-header-inline { display: inline-flex; }
+    /* Collapsed WITHOUT a back link (e.g. Generate Media Plan): shrink title to match
+       the collapsed inline-title size on back-link pages (16px/500), drop subtitle. */
+    .mp2-header-collapsed:not(.mp2-header-hasback) .ptitle { font-size: 16px; font-weight: 500; }
+    .mp2-header-collapsed:not(.mp2-header-hasback) .psub { display: none; }
     .cs-toolbar {
       display: flex;
       align-items: flex-end;
@@ -218,6 +237,9 @@ function sdtInjectStyles() {
     }
     .tx2-seg:hover { color: var(--text); }
     .tx2-seg--act  { background: var(--surface); color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+    /* "or upload a file" divider under the MUI library <Select> (video input) */
+    .tx2-or-divider { display: flex; align-items: center; gap: 10px; margin: 12px 0; color: var(--faint); font-size: 11px; }
+    .tx2-or-divider::before, .tx2-or-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
     .tx2-upload-zone {
       display: flex;
       flex-direction: column;

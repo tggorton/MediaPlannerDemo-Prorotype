@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import Slider from '@mui/material/Slider';
-import { useBridgeNodes } from '../utils/useBridgeNodes';
+import { useBridgeNodes } from '@/bridges/useBridgeNodes';
 
 // Generic bridge: any legacy element marked with data-mui-slider gets a real
 // MUI <Slider> portaled into it. Configured via data attributes:

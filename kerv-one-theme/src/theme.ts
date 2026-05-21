@@ -268,6 +268,16 @@ export const theme = createTheme({
     },
     MuiButton: {
       styleOverrides: {
+        // MediaPlanner-Prototype note: buttons use a 4px corner radius (the MUI
+        // default / kit standard), set explicitly here so it's unambiguous. The
+        // sidebar "app icon" buttons are intentionally a DIFFERENT element class
+        // and keep an 8px radius (see Sidebar.tsx) — do not unify them with this.
+        root: {
+          borderRadius: 4,
+          '&:hover': {
+            boxShadow: 'none',
+          },
+        },
         contained: {
           boxShadow: 'none',
         },
@@ -288,11 +298,6 @@ export const theme = createTheme({
             backgroundColor: 'rgba(237, 0, 94, 0.12)',
           },
         }),
-        root: {
-          '&:hover': {
-            boxShadow: 'none',
-          },
-        },
       },
     },
     MuiPaper: {

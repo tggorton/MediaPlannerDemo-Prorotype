@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Box, Button, Tab, Tabs } from '@mui/material';
-import { useBridgeNodes } from '../utils/useBridgeNodes';
+import { useBridgeNodes } from '@/bridges/useBridgeNodes';
 
 // Bridges the legacy "Refine Moment" modal's tab bar and footer actions to MUI.
 // The taxonomy rows + Highcharts scatter inside stay legacy (dynamic list / chart

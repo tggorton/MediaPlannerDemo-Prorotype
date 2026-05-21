@@ -1,3 +1,4 @@
+import { fileURLToPath, URL } from 'node:url';
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -53,6 +54,10 @@ function unsplashPlaceholderPlugin(): Plugin {
 
 export default defineConfig({
   plugins: [react(), unsplashPlaceholderPlugin()],
+  resolve: {
+    // `@/` → src/ so imports stay clean across the feature-based folders.
+    alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
+  },
   server: {
     port: 3000,
     strictPort: true,

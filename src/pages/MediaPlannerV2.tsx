@@ -1,11 +1,13 @@
 import { useEffect, useRef } from 'react';
-import { SaveMediaPlanDialog } from '../components/SaveMediaPlanDialog';
-import { MuiSliderBridge } from '../components/MuiSliderBridge';
-import { ProgressBarBridge } from '../components/ProgressBarBridge';
-import { MomentsFilterBridge } from '../components/MomentsFilter';
-import { RefineModalBridge } from '../components/RefineModalBridge';
-import { MomentTypeToggleBridge } from '../components/MomentTypeToggle';
-import { MomentsGridBridge } from '../components/MomentsGrid';
+import { SaveMediaPlanDialog } from '@/features/media-planner/SaveMediaPlanDialog';
+import { MuiSliderBridge } from '@/bridges/MuiSliderBridge';
+import { ProgressBarBridge } from '@/bridges/ProgressBarBridge';
+import { MomentsFilterBridge } from '@/features/media-planner/MomentsFilter';
+import { RefineModalBridge } from '@/features/media-planner/RefineModalBridge';
+import { MomentTypeToggleBridge } from '@/features/media-planner/MomentTypeToggle';
+import { MomentsGridBridge } from '@/features/media-planner/MomentsGrid';
+import { SnackbarBridge } from '@/bridges/SnackbarBridge';
+import { MuiSelectBridge } from '@/bridges/MuiSelectBridge';
 
 // The legacy media-planner-v2.js script attaches its top-level functions to
 // `window` (loaded as a plain <script> in index.html, not a module). We call
@@ -63,6 +65,8 @@ export function MediaPlannerV2() {
       <RefineModalBridge />
       <MomentTypeToggleBridge />
       <MomentsGridBridge />
+      <SnackbarBridge />
+      <MuiSelectBridge />
     </>
   );
 }

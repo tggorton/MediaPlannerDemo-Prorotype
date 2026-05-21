@@ -1,129 +1,26 @@
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import {
-  Box,
-  Button,
-  Checkbox,
-  Chip,
-  IconButton,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Checkbox, Chip, IconButton, Tooltip, Typography } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { useBridgeNodes } from '../utils/useBridgeNodes';
+import type { MomentCardData } from './types';
+import { MomentImage } from './MomentImage';
+import { SupplyChip, pillSx } from './SupplyChip';
 
-// Full React/MUI rewrite of the Moments-Match card grid. Legacy
-// mp2RenderMomentCards() publishes the filtered card data on
-// window.mp2MomentCardsData and calls window.mp2NotifyMomentsGrid() to trigger a
-// re-read. Card behaviors (select / refine / examples / reset) call the existing
-// legacy window functions so the rest of the app (media-plan panel, refine
-// modal, refined stats) keeps working.
-type MomentCardData = {
-  name: string;
-  score: number;
-  assets: number;
-  impM: string | number;
-  cpm: number;
-  inventory: number;
-  channels: string[];
-  refined: boolean;
-  isHigh: boolean;
-  supplyType: 'ads' | 'organic' | 'live';
-};
+const kpiLabelSx = { fontSize: 9, textTransform: 'uppercase', letterSpacing: '.4px', color: 'var(--faint)', mb: '2px' } as const;
 
-declare global {
-  interface Window {
-    mp2MomentCardsData?: MomentCardData[];
-    mp2NotifyMomentsGrid?: () => void;
-    mp2SelectedMoments?: Record<string, boolean>;
-    mp2ToggleMomentCard?: (name: string) => void;
-    mp2OpenMomentModal?: (name: string, score: number, assets: number) => void;
-    mp2ShowExamples?: (name: string, score: number, assets: number, btn: HTMLElement) => void;
-    mp2ResetCard?: (name: string) => void;
-  }
-}
-
-// Each moment maps to one of the bundled images in /public/assets/moments/.
-// Bundled (rather than fetched from Unsplash at runtime) so the demo is
-// self-contained on Vercel with no API key. Shared with the legacy media-plan
-// rail via window.MP2_MOMENT_IMAGES (see media-planner-v2.js).
-const MOMENT_IMAGES: Record<string, string> = {
-  'Family Dinner Time': 'family',
-  'Grocery Shopping': 'shopping',
-  'Healthy Eating': 'produce',
-  'Meal Prep & Cooking': 'cooking',
-  'Fresh Produce': 'produce',
-  'Weekend BBQ': 'meat',
-  'Quick & Easy Meals': 'cooking',
-  'Home Cooking': 'cooking',
-  'Family Life': 'family',
-  'Snack & Entertaining': 'shopping',
-  'Budget Living': 'grocery',
-  'Lifestyle & Wellness': 'produce',
-  'Food Discovery': 'grocery',
-  'Kids & Family': 'family',
-  'Community & Local': 'grocery',
-  'Seasonal Celebrations': 'family',
-};
-
-function momentImageSrc(name: string): string {
-  return `/assets/moments/${MOMENT_IMAGES[name] || 'cooking'}.jpg`;
-}
-
-const pillSx = (bg: string, border: string, color: string) => ({
-  height: 18,
-  bgcolor: bg,
-  border: `1px solid ${border}`,
-  color,
-  borderRadius: '20px',
-  '& .MuiChip-label': { px: 0.75, fontSize: 9, fontWeight: 700, lineHeight: 1 },
-});
-
-function SupplyChip({ type }: { type: MomentCardData['supplyType'] }) {
-  if (type === 'live') {
-    return (
-      <Chip
-        size="small"
-        icon={
-          <Box
-            component="span"
-            sx={{ width: 5, height: 5, borderRadius: '50%', bgcolor: '#ef4444', boxShadow: '0 0 4px #ef4444', ml: '6px !important' }}
-          />
-        }
-        label="Live"
-        sx={pillSx('#fef2f2', '#fecaca', '#dc2626')}
-      />
-    );
-  }
-  if (type === 'organic') {
-    return <Chip size="small" label="Organic Pause" sx={pillSx('#f0fdfa', '#99f6e4', '#0f766e')} />;
-  }
-  return <Chip size="small" label="VoD" sx={pillSx('#eff6ff', '#bfdbfe', '#1d4ed8')} />;
-}
-
-function MomentImage({ name }: { name: string }) {
-  const [failed, setFailed] = useState(false);
-
+function KpiCell({ label, value }: { label: string; value: string }) {
   return (
-    <Box sx={{ position: 'absolute', inset: 0, bgcolor: 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-      {failed ? (
-        <VideoLibraryIcon sx={{ fontSize: 22, color: 'var(--faint)', opacity: 0.4 }} />
-      ) : (
-        <Box
-          component="img"
-          src={momentImageSrc(name)}
-          alt=""
-          onError={() => setFailed(true)}
-          sx={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-        />
-      )}
+    <Box>
+      <Typography sx={kpiLabelSx}>{label}</Typography>
+      <Typography sx={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{value}</Typography>
     </Box>
   );
 }
 
-function MomentCard({ card, onChanged }: { card: MomentCardData; onChanged: () => void }) {
+// One moment card: media thumbnail + status chips, KPIs, channels, and the
+// Refine / examples actions. Select / refine / examples / reset call back into
+// the legacy window functions so the rest of the app stays in sync.
+export function MomentCard({ card, onChanged }: { card: MomentCardData; onChanged: () => void }) {
   const selected = !!window.mp2SelectedMoments?.[card.name];
   const visibleCh = card.channels.slice(0, 3);
   const extraCh = card.channels.slice(3);
@@ -268,47 +165,5 @@ function MomentCard({ card, onChanged }: { card: MomentCardData; onChanged: () =
         </Box>
       </Box>
     </Box>
-  );
-}
-
-const kpiLabelSx = { fontSize: 9, textTransform: 'uppercase', letterSpacing: '.4px', color: 'var(--faint)', mb: '2px' } as const;
-
-function KpiCell({ label, value }: { label: string; value: string }) {
-  return (
-    <Box>
-      <Typography sx={kpiLabelSx}>{label}</Typography>
-      <Typography sx={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{value}</Typography>
-    </Box>
-  );
-}
-
-function MomentsGridContent() {
-  const [, setVersion] = useState(0);
-
-  useEffect(() => {
-    window.mp2NotifyMomentsGrid = () => setVersion((v) => v + 1);
-    return () => {
-      delete window.mp2NotifyMomentsGrid;
-    };
-  }, []);
-
-  const cards = window.mp2MomentCardsData ?? [];
-  const bump = () => setVersion((v) => v + 1);
-
-  return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 210px), 1fr))', gap: '10px', pb: 2 }}>
-      {cards.map((card) => (
-        <MomentCard key={card.name} card={card} onChanged={bump} />
-      ))}
-    </Box>
-  );
-}
-
-export function MomentsGridBridge() {
-  const nodes = useBridgeNodes('[data-moments-grid]', 'momentsGridId');
-  return (
-    <>
-      {nodes.map((node) => createPortal(<MomentsGridContent />, node, node.dataset.momentsGridId))}
-    </>
   );
 }

@@ -8,16 +8,20 @@
 //
 // To restore everything: set each flag below to `true`.
 // To restore individually:
-//   MP2_FEATURES.previousAnalysisTab → "Previous Analysis" tab on the home page
-//   MP2_FEATURES.adAnalysisTab       → "Ad Analysis" tab on the results page
-//   MP2_FEATURES.aiMediaPlanTab      → "AI Media Plan" tab on the results page
+//   MP2_FEATURES.previousAnalysisTab  → "Previous Analysis" tab on the home page
+//   MP2_FEATURES.adAnalysisTab        → "Ad Analysis" tab on the results page
+//   MP2_FEATURES.aiMediaPlanTab       → "AI Media Plan" tab on the results page
+//   MP2_FEATURES.exportActivateButtons → "Export to IO" + "Activate via DSP"
+//        buttons on a saved media plan. Hidden for the Alpha (those features
+//        aren't live yet); flip to true to bring them back in a future version.
 //
 // Styling for these may need a refresh when reintroduced — they were hidden
 // before a planned UX pass, not because the underlying functionality changed.
 var MP2_FEATURES = {
-  previousAnalysisTab: false,
-  adAnalysisTab:       false,
-  aiMediaPlanTab:      false
+  previousAnalysisTab:    false,
+  adAnalysisTab:          false,
+  aiMediaPlanTab:         false,
+  exportActivateButtons:  false
 };
 
 // ─── MUI Material Icons (legacy bridge) ───────────────────────────────────────
@@ -47,6 +51,8 @@ var MP2_ICON_PATHS = {
   'check':             '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>',
   'refresh':           '<path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>',
   'close':             '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>',
+  'calendar-today':    '<path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-1.99.9-1.99 2L2 19c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H4V8h16v11z"/>',
+  'code':              '<path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>',
   'play-arrow':        '<path d="M8 5v14l11-7z"/>',
   'trending-up':       '<path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>',
   'trending-down':     '<path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/>',
@@ -57,7 +63,7 @@ var MP2_ICON_PATHS = {
   'emoji-events':      '<path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/>',
   'open-in-full':      '<path d="M21 11V3h-8l3.29 3.29-10 10L3 13v8h8l-3.29-3.29 10-10z"/>',
   'close-fullscreen':  '<path d="M22 3.41L16.71 8.7 20 12h-8V4l3.29 3.29L20.59 2 22 3.41zM3.41 22l5.29-5.29L12 20v-8H4l3.29 3.29L2 20.59 3.41 22z"/>',
-  'data-object':       '<path d="M4 7v2c0 .55-.45 1-1 1H2v4h1c.55 0 1 .45 1 1v2c0 1.65 1.35 3 3 3h3v-2H7c-.55 0-1-.45-1-1v-2c0-1.3-.84-2.42-2-2.83v-.34c1.16-.41 2-1.52 2-2.83V5c0-.55.45-1 1-1h3V2H7C5.35 2 4 3.35 4 5v2zm16-3h-3v2h3c.55 0 1 .45 1 1v2c0 1.3.84 2.42 2 2.83v.34c-1.16.41-2 1.52-2 2.83v2c0 .55-.45 1-1 1h-3v2h3c1.65 0 3-1.35 3-3v-2c0-.55.45-1 1-1h1v-4h-1c-.55 0-1-.45-1-1V7c0-1.65-1.35-3-3-3z"/>',
+  'data-object':       '<path d="M4 7v2c0 .55-.45 1-1 1H2v4h1c.55 0 1 .45 1 1v2c0 1.65 1.35 3 3 3h3v-2H7c-.55 0-1-.45-1-1v-2c0-1.3-.84-2.42-2-2.83v-.34C5.16 11.42 6 10.3 6 9V7c0-.55.45-1 1-1h3V4H7C5.35 4 4 5.35 4 7m17 3c-.55 0-1-.45-1-1V7c0-1.65-1.35-3-3-3h-3v2h3c.55 0 1 .45 1 1v2c0 1.3.84 2.42 2 2.83v.34c-1.16.41-2 1.52-2 2.83v2c0 .55-.45 1-1 1h-3v2h3c1.65 0 3-1.35 3-3v-2c0-.55.45-1 1-1h1v-4z"/>',
   'document-scanner':  '<path d="M7 3H4v3H2V1h5v2zm15 3V1h-5v2h3v3h2zM7 21H4v-3H2v5h5v-2zm13-3v3h-3v2h5v-5h-2zM19 6H5v12h14V6zm-2 10H7V8h10v8z"/>',
   'shield':            '<path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>'
 };
@@ -94,11 +100,119 @@ var mp2TaxStep      = 'upload';
 var mp2TaxInputType = 'video';
 var mp2TaxFileName  = '';
 
+// ─── Session persistence ──────────────────────────────────────────────────────
+// Keeps the demo "in place" across refreshes (like a normal website): saved
+// media plans, the current view, and the in-progress builder state are
+// snapshotted to localStorage and restored on load. The "Reset experience"
+// button in the header (window.mp2ResetExperience) clears this so the demo
+// returns to first-run defaults. The current React route persists itself via
+// the URL (BrowserRouter); this only covers the legacy media-planner sub-state.
+var MP2_SESSION_KEY    = 'mp2_session_v1';
+var mp2CurrentView     = { type: 'upload' }; // {type:'upload'|'results'} | {type:'planDetail', idx}
+var mp2SkipPersist     = false;              // true during reset so beforeunload doesn't re-save
+var mp2SessionBound    = false;
+
+function mp2PersistSession() {
+  if (mp2SkipPersist) return;
+  try {
+    localStorage.setItem(MP2_SESSION_KEY, JSON.stringify({
+      savedMediaPlansV2: savedMediaPlansV2,
+      homeTab:           mp2HomeTab,
+      view:              mp2CurrentView,
+      selectedMoments:   mp2SelectedMoments,
+      refinedStats:      mp2RefinedStats,
+      savedRefinements:  mp2SavedRefinements,
+      momentType:        mp2MomentType,
+      taxInputType:      mp2TaxInputType,
+      taxFileName:       mp2TaxFileName,
+      mediaPlanVisible:  inv2MediaPlanVisible,
+      editingPlanIdx:    mp2EditingPlanIdx,
+      lookbackSecs:      mp2LookbackSecs,
+      videoLibraryChoice:mp2VideoLibraryChoice,
+      mf: { score: mp2MfScore, channels: mp2MfChannels, cpmMin: mp2MfCpmMin, cpmMax: mp2MfCpmMax, types: mp2MfTypes, platforms: mp2MfPlatforms }
+    }));
+  } catch (e) { /* storage unavailable — non-fatal */ }
+}
+
+// Jump to the Generate Media Plan home (New Plan tab). Used by the header logo.
+function mp2GoHome() {
+  mp2HomeTab = 'new-plan';
+  mp2ShowUpload();
+}
+
+// Clears the saved session and reloads, returning the demo to first-run state.
+function mp2ResetExperience() {
+  if (typeof confirm === 'function' &&
+      !confirm('Reset the demo experience? This clears your saved media plans and returns to the start.')) return;
+  mp2SkipPersist = true;
+  try { localStorage.removeItem(MP2_SESSION_KEY); } catch (e) {}
+  try { sessionStorage.removeItem('mp2_force_home'); } catch (e) {}
+  location.reload();
+}
+
+// Toggles every MP2_FEATURES flag on/off and re-renders the current view so the
+// intentionally-hidden tabs/buttons appear or disappear. Session-only — a refresh
+// or Reset returns everything to hidden (flags re-init to false on load).
+// Driven by the header "Expose / Hide future state" button. See feature-flags skill.
+function mp2SetFutureState(on) {
+  Object.keys(MP2_FEATURES).forEach(function(k) { MP2_FEATURES[k] = !!on; });
+  var v = mp2CurrentView || { type: 'upload' };
+  if (v.type === 'planDetail' && savedMediaPlansV2[v.idx]) mp2ShowMediaPlanDetail(v.idx);
+  else if (v.type === 'results') mp2ShowResults();
+  else mp2ShowUpload();
+}
+
+// Restores the saved session and routes to the last view. Returns true if it
+// handled rendering, false if there's nothing to restore (caller shows default).
+function mp2RestoreSession() {
+  var forceHome = false;
+  try {
+    if (sessionStorage.getItem('mp2_force_home') === '1') { forceHome = true; sessionStorage.removeItem('mp2_force_home'); }
+  } catch (e) {}
+
+  var s = null;
+  try { s = JSON.parse(localStorage.getItem(MP2_SESSION_KEY) || 'null'); } catch (e) { s = null; }
+
+  if (s) {
+    if (Array.isArray(s.savedMediaPlansV2))        savedMediaPlansV2   = s.savedMediaPlansV2;
+    if (s.homeTab)                                 mp2HomeTab          = s.homeTab;
+    if (s.selectedMoments)                         mp2SelectedMoments  = s.selectedMoments;
+    if (s.refinedStats)                            mp2RefinedStats     = s.refinedStats;
+    if (s.savedRefinements)                        mp2SavedRefinements = s.savedRefinements;
+    if (s.momentType)                              mp2MomentType       = s.momentType;
+    if (s.taxInputType)                            mp2TaxInputType     = s.taxInputType;
+    if (typeof s.taxFileName === 'string')         mp2TaxFileName      = s.taxFileName;
+    inv2MediaPlanVisible = !!s.mediaPlanVisible;
+    mp2EditingPlanIdx    = (typeof s.editingPlanIdx === 'number') ? s.editingPlanIdx : null;
+    if (typeof s.lookbackSecs === 'number')        mp2LookbackSecs      = s.lookbackSecs;
+    if (typeof s.videoLibraryChoice === 'string')  mp2VideoLibraryChoice = s.videoLibraryChoice;
+    if (s.mf) {
+      mp2MfScore = s.mf.score || 'all'; mp2MfChannels = s.mf.channels || [];
+      mp2MfCpmMin = (typeof s.mf.cpmMin === 'number') ? s.mf.cpmMin : 0;
+      mp2MfCpmMax = (typeof s.mf.cpmMax === 'number') ? s.mf.cpmMax : 50;
+      mp2MfTypes = s.mf.types || []; mp2MfPlatforms = s.mf.platforms || [];
+    }
+  }
+
+  if (forceHome) { mp2GoHome(); return true; }
+  if (!s) return false;
+
+  var v = s.view || { type: 'upload' };
+  if (v.type === 'planDetail' && typeof v.idx === 'number' && savedMediaPlansV2[v.idx]) mp2ShowMediaPlanDetail(v.idx);
+  else if (v.type === 'results') mp2ShowResults();
+  else mp2ShowUpload();
+  return true;
+}
+
 function renderMediaPlannerV2() {
   setTimeout(function() {
-    mp2TaxStep = 'upload'; mp2TaxInputType = 'video'; mp2TaxFileName = '';
     sdtInjectStyles();
-    mp2ShowUpload();
+    mp2BindHeaderScroll();
+    if (!mp2SessionBound) { window.addEventListener('beforeunload', mp2PersistSession); mp2SessionBound = true; }
+    if (!mp2RestoreSession()) {
+      mp2TaxStep = 'upload'; mp2TaxInputType = 'video'; mp2TaxFileName = '';
+      mp2ShowUpload();
+    }
   }, 0);
   // Two-box page layout: a header card (back link + title + subtitle) stacked
   // above a content card. See the `page-layout` skill. To revert to the single
@@ -106,8 +220,12 @@ function renderMediaPlannerV2() {
   // and drop mp2-header-card / mp2UpdateHeaderCard.
   return `
 <div id="sdt-panel-taxonomy2">
-  <div id="mp2-header-card" class="cs-card" style="padding:24px 32px;margin-bottom:16px">
-    <div id="mp2-back-slot"></div>
+  <div id="mp2-header-card" class="cs-card" style="padding:18px 32px;margin-bottom:16px;position:relative">
+    <button id="mp2-header-toggle" class="mp2-header-toggle" data-mui-tip="Collapse details" aria-label="Collapse details" onclick="mp2ToggleHeaderCollapsed(true)">${mp2Icon('expand-less', { size: 20 })}</button>
+    <div class="mp2-header-lead">
+      <div id="mp2-back-slot"></div>
+      <span id="mp2-header-inline" class="mp2-header-inline"></span>
+    </div>
     <div id="mp2-title-slot"></div>
   </div>
   <div class="cs-card" style="padding:32px">
@@ -129,12 +247,16 @@ function mp2UpdateHeaderCard() {
 
 // Sets the page title + subtitle in the header card. Pass null/empty to clear
 // (used during the processing step so the scan visual gets the focus).
+var mp2HeaderTitle = '';
 function mp2SetTitle(title, subtitle) {
   var slot = document.getElementById('mp2-title-slot');
   if (!slot) return;
+  mp2HeaderTitle = title || '';
   slot.innerHTML = (!title && !subtitle) ? ''
     : ((title    ? '<div class="ptitle">' + title + '</div>' : '')
      + (subtitle ? '<div class="psub" style="margin-bottom:0">' + subtitle + '</div>' : ''));
+  mp2RenderHeaderInline();
+  mp2SetHeaderCollapsed(false, false); // a new page/title always starts expanded
   mp2UpdateHeaderCard();
 }
 
@@ -145,16 +267,95 @@ function mp2SetBackLink(label, onclickAttr) {
   if (!slot) return;
   if (!label) {
     slot.innerHTML = '';
-    slot.style.marginBottom = '';
   } else {
-    slot.style.marginBottom = '14px';
     slot.innerHTML =
-        '<a onclick="' + onclickAttr + '" class="mp2-back-link" style="display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:13px;font-weight:600;letter-spacing:.46px;text-transform:uppercase;cursor:pointer;text-decoration:none">'
+        '<a onclick="' + onclickAttr + '" class="mp2-back-link" style="display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-size:14px;line-height:24px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;text-decoration:none">'
       +   '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>'
       +   label
       + '</a>';
   }
+  mp2RenderHeaderInline();
   mp2UpdateHeaderCard();
+}
+
+// ── Collapsible header card ───────────────────────────────────────────────────
+// The header card collapses to a single row (back link + inline title) to save
+// vertical space: automatically when the user scrolls down, or manually via the
+// chevron. A manual collapse also centers the main content card in view.
+// Adapted from the SalesDemo-Prototype "title panel" behavior.
+var mp2HeaderCollapsed = false;
+var mp2HeaderManualAt  = 0;     // timestamp of last manual toggle (locks out scroll briefly)
+var mp2HeaderScrollBound = false;
+
+// Builds the collapsed-state inline summary shown next to the back link
+// (" | Page Title"). The separator only appears when a back link is present.
+function mp2RenderHeaderInline() {
+  var el = document.getElementById('mp2-header-inline');
+  if (!el) return;
+  var back = document.getElementById('mp2-back-slot');
+  var hasBack = !!(back && back.innerHTML.trim() !== '');
+  // Drives the two collapsed modes: with a back link → inline summary row; without
+  // one (e.g. Generate Media Plan) → title shrinks in place, no top gap.
+  var card = document.getElementById('mp2-header-card');
+  if (card) card.classList.toggle('mp2-header-hasback', hasBack);
+  el.innerHTML = mp2HeaderTitle
+    ? (hasBack ? '<span class="mp2-header-sep">|</span>' : '') + '<span>' + mp2HeaderTitle + '</span>'
+    : '';
+}
+
+function mp2SetHeaderCollapsed(collapsed, manual) {
+  var card = document.getElementById('mp2-header-card');
+  if (!card) return;
+  if (manual) mp2HeaderManualAt = Date.now();
+  mp2HeaderCollapsed = collapsed;
+  card.classList.toggle('mp2-header-collapsed', collapsed);
+  var toggle = document.getElementById('mp2-header-toggle');
+  if (toggle) {
+    toggle.innerHTML = mp2Icon(collapsed ? 'expand-more' : 'expand-less', { size: 20 });
+    toggle.setAttribute('data-mui-tip', collapsed ? 'Expand details' : 'Collapse details');
+  }
+  // On a manual collapse, center the main content card in the viewport.
+  if (manual && collapsed) {
+    var area = document.getElementById('tx2-content-area');
+    var box  = area ? area.closest('.cs-card') : null;
+    if (box && box.scrollIntoView) {
+      requestAnimationFrame(function() {
+        box.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+      });
+    }
+  }
+}
+
+function mp2ToggleHeaderCollapsed(manual) {
+  mp2SetHeaderCollapsed(!mp2HeaderCollapsed, manual);
+}
+
+// Auto-collapse the header on a downward scroll, re-expand on an upward one.
+// Listens to BOTH the content column's scroll AND the wheel gesture, because on
+// some views the scrolling happens in an inner panel (or the content fits and
+// never scrolls), so scrollTop alone wouldn't fire. Bound once; ignores input
+// for a moment right after a manual toggle so the two don't fight.
+function mp2BindHeaderScroll() {
+  if (mp2HeaderScrollBound) return;
+  mp2HeaderScrollBound = true;
+
+  function apply(collapse) {
+    if (!document.getElementById('mp2-header-card')) return;
+    if (Date.now() - mp2HeaderManualAt < 700) return; // respect a recent manual toggle
+    if (collapse && !mp2HeaderCollapsed) mp2SetHeaderCollapsed(true, false);
+    else if (!collapse && mp2HeaderCollapsed) mp2SetHeaderCollapsed(false, false);
+  }
+
+  // Collapse on a downward scroll gesture, expand on an upward one. Bound on
+  // window so it fires for every media-planner view regardless of which element
+  // (or inner panel) the wheel lands on, and whether anything actually scrolls.
+  // Gesture-based (not scrollTop) on purpose: an absolute-position rule fought
+  // the gesture on tabs where .content itself scrolls (New Plan) and risked a
+  // reflow flicker. The apply() guard scopes this to media-planner views.
+  window.addEventListener('wheel', function(e) {
+    if (e.deltaY > 2) apply(true);
+    else if (e.deltaY < -2) apply(false);
+  }, { passive: true });
 }
 
 function mp2ShowMediaPlanDetail(idx) {
@@ -163,13 +364,14 @@ function mp2ShowMediaPlanDetail(idx) {
   var ca = document.getElementById('tx2-content-area');
   if (!ca) return;
 
+  mp2CurrentView = { type: 'planDetail', idx: idx };
   mp2HomeTab = 'plans';
   mp2SetBackLink('Back to Media Plans', 'mp2ShowUpload()');
-  mp2SetTitle(null);
+  mp2SetTitle('Your Media Plans', 'Export/push or modify your saved media plans below');
 
   var TH  = 'padding:9px 12px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;color:var(--faint);border-bottom:1px solid var(--border);white-space:nowrap';
   var TOT = 'padding:10px 12px;font-size:12px;font-weight:600;color:var(--text);border-top:2px solid var(--border-md);background:var(--bg)';
-  var DELBTN = 'border:none;background:none;cursor:pointer;color:var(--faint);padding:2px 6px;border-radius:5px;line-height:1;font-size:16px;transition:color .12s';
+  var DELBTN = 'border:none;background:none;cursor:pointer;color:var(--faint);padding:4px;border-radius:5px;line-height:1;display:inline-flex;align-items:center;justify-content:center;transition:color .12s';
   var pencilSvg = mp2Icon('edit', { size: 14 });
 
   var CPM_DT = { 'Prime Time': 25, 'Daytime': 15, 'Late Night': 18, 'Morning': 12, 'Early Fringe': 20 };
@@ -217,7 +419,7 @@ function mp2ShowMediaPlanDetail(idx) {
           + '<td style="padding:10px 12px;font-size:12px;font-weight:500;color:var(--text);text-align:right;white-space:nowrap">' + (item.impressionsLabel || '—') + '</td>'
           + '<td style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--text);text-align:right;white-space:nowrap">' + (item._cpm > 0 ? '$' + item._cpm : '—') + '</td>'
           + '<td style="padding:6px 8px;text-align:center;width:32px">'
-          +   '<button style="' + DELBTN + '" onclick="mp2DeletePlanItem(' + idx + ',' + item._idx + ')" onmouseenter="this.style.color=\'var(--accent)\'" onmouseleave="this.style.color=\'var(--faint)\'">×</button>'
+          +   '<button data-mui-tip="Remove moment" style="' + DELBTN + '" onclick="mp2DeletePlanItem(' + idx + ',' + item._idx + ')" onmouseenter="this.style.color=\'var(--accent)\'" onmouseleave="this.style.color=\'var(--faint)\'">' + mp2Icon('close', { size: 14 }) + '</button>'
           + '</td>'
           + '</tr>';
       }).join('');
@@ -234,17 +436,18 @@ function mp2ShowMediaPlanDetail(idx) {
     '<div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:nowrap;margin-bottom:20px;gap:16px">'
     +   '<div style="min-width:0;flex:1">'
     // Inline-editable title
-    +     '<div id="mp-title-wrap-' + idx + '">'
-    +       '<div id="mp-title-display-' + idx + '" style="display:flex;align-items:center;gap:6px;cursor:pointer" onmouseenter="document.getElementById(\'mp-pencil-' + idx + '\').style.opacity=\'1\'" onmouseleave="document.getElementById(\'mp-pencil-' + idx + '\').style.opacity=\'0\'" onclick="mp2StartEditPlanName(' + idx + ')">'
+    +     '<div id="mp-title-wrap-' + idx + '" style="display:flex;align-items:center;gap:10px">'
+    +       '<div id="mp-title-display-' + idx + '" data-mui-tip="Rename plan" style="display:flex;align-items:center;gap:6px;cursor:pointer" onclick="mp2StartEditPlanName(' + idx + ')">'
     +         '<span style="font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.3px">' + plan.name + '</span>'
-    +         '<span id="mp-pencil-' + idx + '" style="opacity:0;transition:opacity .15s;color:var(--faint);display:flex;align-items:center">' + pencilSvg + '</span>'
+    +         '<span style="color:var(--faint);display:flex;align-items:center">' + pencilSvg + '</span>'
     +       '</div>'
+    +       '<button onclick="mp2DeleteMediaPlan(' + idx + ')" data-mui-tip="Delete plan" style="border:none;background:none;cursor:pointer;color:var(--faint);padding:0;display:inline-flex;align-items:center;line-height:1;transition:color .12s" onmouseenter="this.style.color=\'var(--accent)\'" onmouseleave="this.style.color=\'var(--faint)\'">' + mp2Icon('delete-outline', { size: 16 }) + '</button>'
     +     '</div>'
     +     '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:4px">'
     +       '<span style="font-size:12px;color:var(--faint)">Created ' + plan.date + '</span>'
       + (plan.flightStart && plan.flightEnd
           ? '<span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--faint)">'
-          +   '<svg width="10" height="10" viewBox="0 0 12 12" fill="none" style="flex-shrink:0"><rect x="1" y="2" width="10" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1 5h10M4 1v2M8 1v2" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>'
+          +   mp2Icon('calendar-today', { size: 11 })
           +   plan.flightStart + ' → ' + plan.flightEnd
           + '</span>'
           : '')
@@ -267,9 +470,6 @@ function mp2ShowMediaPlanDetail(idx) {
           +   '<div style="font-size:20px;font-weight:700;color:var(--accent)">' + fmtAvgCpm + '</div>'
           + '</div>'
           : '')
-    +     '<button onclick="mp2DeleteMediaPlan(' + idx + ')" data-mui-tip="Delete plan" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:1px solid #fecaca;border-radius:7px;background:#fff5f5;color:#ef4444;cursor:pointer;padding:0">'
-    +       mp2Icon('delete-outline', { size: 15 })
-    +     '</button>'
     +   '</div>'
     + '</div>'
 
@@ -301,20 +501,23 @@ function mp2ShowMediaPlanDetail(idx) {
 
     // Action buttons
     + '<div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">'
-    +   '<button onclick="mp2AddMoreMoments(' + idx + ')" style="width:100%;height:40px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:9px;border:1px solid var(--border-md);background:var(--surface);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit" onmouseenter="this.style.background=\'var(--bg)\'" onmouseleave="this.style.background=\'var(--surface)\'">'
-    +     mp2Icon('add', { size: 16 })
-    +     'Add more moments'
+    +   '<button onclick="mp2AddMoreMoments(' + idx + ')" style="width:100%;height:40px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:4px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .13s" onmouseenter="this.style.opacity=\'.88\'" onmouseleave="this.style.opacity=\'1\'">'
+    +     mp2Icon('edit', { size: 16 })
+    +     'Modify moments'
     +   '</button>'
-    +   '<div style="display:flex;gap:8px">'
-    +     '<button id="inv-export-btn-' + idx + '" onclick="mp2ExportInsertionOrder(' + idx + ',this)" style="flex:1;height:40px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:9px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">'
-    +       mp2Icon('download', { size: 16 })
-    +       'Export to IO'
-    +     '</button>'
-    +     '<button onclick="mp2ActivateDSP(' + idx + ')" style="flex:1;height:40px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:9px;border:none;background:#0f172a;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit" onmouseenter="this.style.background=\'#1e293b\'" onmouseleave="this.style.background=\'#0f172a\'">'
-    +       mp2Icon('phone-android', { size: 16 })
-    +       'Activate via DSP'
-    +     '</button>'
-    +   '</div>'
+    // Export to IO + Activate via DSP — hidden for Alpha. See MP2_FEATURES.exportActivateButtons.
+    + (MP2_FEATURES.exportActivateButtons
+        ? '<div style="display:flex;gap:8px">'
+        +     '<button id="inv-export-btn-' + idx + '" onclick="mp2ExportInsertionOrder(' + idx + ',this)" style="flex:1;height:40px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:4px;border:1px solid var(--accent);background:transparent;color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .12s" onmouseenter="this.style.background=\'rgba(237,0,94,.06)\'" onmouseleave="this.style.background=\'transparent\'">'
+        +       mp2Icon('download', { size: 16 })
+        +       'Export to IO'
+        +     '</button>'
+        +     '<button onclick="mp2ActivateDSP(' + idx + ')" style="flex:1;height:40px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:4px;border:none;background:#0f172a;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit" onmouseenter="this.style.background=\'#1e293b\'" onmouseleave="this.style.background=\'#0f172a\'">'
+        +       mp2Icon('phone-android', { size: 16 })
+        +       'Activate via DSP'
+        +     '</button>'
+        +   '</div>'
+        : '')
     + '</div>';
 }
 
@@ -332,7 +535,7 @@ function mp2ActivateDSP(idx) {
     + '<div style="font-size:12px;color:var(--muted);margin-bottom:20px">Select the DSP to push this media plan to</div>'
     + '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">'
     + dsps.map(function(d) {
-        return '<button onclick="mp2DSPPush(\'' + d.name + '\',this.closest(\'.dsp-overlay\'))" style="display:flex;align-items:center;gap:12px;height:48px;padding:0 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit;text-align:left;transition:border-color .12s" onmouseenter="this.style.borderColor=\'' + d.color + '\'" onmouseleave="this.style.borderColor=\'var(--border)\'">'
+        return '<button onclick="mp2DSPPush(\'' + d.name + '\',this.closest(\'.dsp-overlay\'))" style="display:flex;align-items:center;gap:12px;height:48px;padding:0 14px;border-radius:4px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit;text-align:left;transition:border-color .12s" onmouseenter="this.style.borderColor=\'' + d.color + '\'" onmouseleave="this.style.borderColor=\'var(--border)\'">'
           + '<div style="width:32px;height:32px;border-radius:8px;background:' + d.color + ';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">' + d.logo + '</div>'
           + '<div>'
           +   '<div style="font-size:13px;font-weight:500;color:var(--text)">' + d.name + '</div>'
@@ -342,7 +545,7 @@ function mp2ActivateDSP(idx) {
           + '</button>';
       }).join('')
     + '</div>'
-    + '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="width:100%;height:36px;border-radius:8px;border:1px solid var(--border-md);background:none;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">Cancel</button>'
+    + '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="width:100%;height:36px;border-radius:4px;border:1px solid var(--border-md);background:none;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">Cancel</button>'
     + '</div>';
   overlay.classList.add('dsp-overlay');
   overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
@@ -419,8 +622,8 @@ function mp2DSPPush(dspName, prevOverlay) {
 
     // Actions
     + '<div style="display:flex;gap:8px">'
-    +   '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="flex:1;height:38px;border-radius:8px;border:1px solid var(--border-md);background:none;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">Cancel</button>'
-    +   '<button onclick="mp2DSPSubmit(\'' + dspName + '\',this)" style="flex:2;height:38px;border-radius:8px;border:none;background:' + color + ';color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px">'
+    +   '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="flex:1;height:38px;border-radius:4px;border:1px solid var(--border-md);background:none;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">Cancel</button>'
+    +   '<button onclick="mp2DSPSubmit(\'' + dspName + '\',this)" style="flex:2;height:38px;border-radius:4px;border:none;background:' + color + ';color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px">'
     +     '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     +     'Push to ' + dspName
     +   '</button>'
@@ -508,7 +711,7 @@ function mp2StartEditPlanName(idx) {
     + '<input id="mp-title-input-' + idx + '" type="text" value="' + plan.name.replace(/"/g, '&quot;') + '"'
     + ' style="font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.3px;border:none;border-bottom:2px solid var(--accent);background:transparent;outline:none;padding:0;font-family:inherit;min-width:0;width:260px"'
     + ' onkeydown="if(event.key===\'Enter\')mp2SavePlanName(' + idx + ');if(event.key===\'Escape\')mp2ShowMediaPlanDetail(' + idx + ')">'
-    + '<button onclick="mp2SavePlanName(' + idx + ')" style="height:26px;padding:0 10px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;flex-shrink:0">Save</button>'
+    + '<button onclick="mp2SavePlanName(' + idx + ')" style="height:26px;padding:0 10px;border-radius:4px;border:none;background:var(--accent);color:#fff;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;flex-shrink:0">Save</button>'
     + '</div>';
   var input = document.getElementById('mp-title-input-' + idx);
   if (input) { input.focus(); input.select(); }
@@ -519,6 +722,7 @@ function mp2SavePlanName(idx) {
   if (!input) return;
   var newName = input.value.trim();
   if (newName && savedMediaPlansV2[idx]) savedMediaPlansV2[idx].name = newName;
+  mp2PersistSession();
   mp2ShowMediaPlanDetail(idx);
 }
 
@@ -567,8 +771,8 @@ function mp2EditFlightDates(idx, pill) {
     +   '</div>'
     + '</div>'
     + '<div style="display:flex;gap:6px">'
-    +   '<button onclick="document.getElementById(\'mp-flight-picker\').remove()" style="flex:1;height:30px;border-radius:6px;border:1px solid var(--border-md);background:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit">Cancel</button>'
-    +   '<button onclick="mp2SaveFlightDates(' + idx + ')" style="flex:1;height:30px;border-radius:6px;border:none;background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Save</button>'
+    +   '<button onclick="document.getElementById(\'mp-flight-picker\').remove()" style="flex:1;height:30px;border-radius:4px;border:1px solid var(--border-md);background:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit">Cancel</button>'
+    +   '<button onclick="mp2SaveFlightDates(' + idx + ')" style="flex:1;height:30px;border-radius:4px;border:none;background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit">Save</button>'
     + '</div>';
 
   document.body.appendChild(picker);
@@ -623,6 +827,19 @@ function mp2DeletePlanItem(planIdx, momentIdx) {
 function mp2AddMoreMoments(planIdx) {
   var plan = savedMediaPlansV2[planIdx];
   if (!plan) return;
+  // Restore the saved plan's moments + their refinements/stats so the user is
+  // editing the existing plan, not starting from an empty selection.
+  mp2SelectedMoments  = {};
+  mp2RefinedStats     = {};
+  mp2SavedRefinements = {};
+  (plan.moments || []).forEach(function(m) {
+    mp2SelectedMoments[m.name] = true;
+    if (m.refinedStats) mp2RefinedStats[m.name]     = Object.assign({}, m.refinedStats);
+    if (m.refinements)  mp2SavedRefinements[m.name] = Object.assign({}, m.refinements);
+  });
+  if (plan.moments && plan.moments[0] && plan.moments[0].type) mp2MomentType = plan.moments[0].type;
+  // Editing an existing plan — saving will update it in place, not create a new one.
+  mp2EditingPlanIdx = planIdx;
   mp2ShowResults();
   invSelected = {};
   (plan.programs || []).forEach(function(p) { if (p.id) invSelected[p.id] = true; });
@@ -650,6 +867,7 @@ function mp2DeleteMediaPlan(idx) {
   if (!plan) return;
   if (!confirm('Delete "' + plan.name + '"? This cannot be undone.')) return;
   savedMediaPlansV2.splice(idx, 1);
+  mp2PersistSession();
   mp2ShowUpload();
 }
 
@@ -770,7 +988,7 @@ function mp2RenderNewPlanAIResults() {
     + '</div>'
     + '<div style="display:flex;gap:8px;align-items:center">'
     +   '<input id="ai-plan-name" class="ai-input" placeholder="Media plan name…" style="flex:1;height:38px">'
-    +   '<button onclick="aiSaveAIMediaPlan()" style="height:38px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:9px;border:none;background:linear-gradient(135deg,#e11d8f,#f43f5e);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(225,29,143,.25);white-space:nowrap">'
+    +   '<button onclick="aiSaveAIMediaPlan()" style="height:38px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:4px;border:none;background:linear-gradient(135deg,#e11d8f,#f43f5e);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(225,29,143,.25);white-space:nowrap">'
     +     '<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 2h8l2 2v8a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#fff" stroke-width="1.4"/><path d="M5 13V8h4v5M4 2v3h5" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>'
     +     'Save as Media Plan'
     +   '</button>'
@@ -783,31 +1001,14 @@ function mp2ShowUpload() {
   var ca = document.getElementById('tx2-content-area');
   if (!ca) return;
 
+  mp2CurrentView = { type: 'upload' };
+  mp2EditingPlanIdx = null; // back at the home/upload view — no longer editing a saved plan
+  mp2TaxInputType = 'video'; mp2VideoLibraryChoice = ''; // Step 2 defaults to the Video option
   mp2SetBackLink(null);
-  mp2SetTitle('Generate Media Plan', 'Upload video or text based brief descriptions, and our AI-driven tools will generate results that best match your criteria.');
+  mp2SetTitle('Generate Media Plan', 'Upload a video, text based brief description or PDF/Doc, or a VAST tag, and our AI-driven tools will generate results that best match your criteria.');
 
   var pgname = document.getElementById('content-bc');
   if (pgname) pgname.textContent = 'Media Planner (v2)';
-
-  function inputArea(type) {
-    var uploadZone =
-        '<div class="tx2-upload-zone" onclick="document.getElementById(\'tx2-file-input-' + type + '\').click()">'
-      + '  <input type="file" id="tx2-file-input-' + type + '" style="display:none"'
-      + (type === 'video' ? ' accept="video/*"' : ' accept=".pdf,.doc,.docx"') + '>'
-      + '  <div style="color:var(--faint);display:flex;justify-content:center">'
-      +   (type === 'video' ? mp2Icon('video-library', { size: 32 }) : mp2Icon('description', { size: 32 }))
-      + '  </div>'
-      + '  <div style="font-size:13px;font-weight:500;color:var(--text);margin-top:6px">'
-      + (type === 'video' ? 'Drop video file here' : 'Drop PDF or document here')
-      + '  </div>'
-      + '  <div style="font-size:11px;color:var(--faint);margin-top:2px">'
-      + (type === 'video' ? 'MP4, MOV, AVI — up to 2 GB' : 'PDF, DOCX, TXT — up to 50 MB')
-      + '  </div>'
-      + '</div>';
-    var textArea =
-        '<textarea class="cs-textarea" id="tx2-text-input" placeholder="Paste or type your text here. The AI will analyse topics, sentiments, moments and taxonomy classifications…" style="width:100%;box-sizing:border-box;min-height:160px;resize:vertical"></textarea>';
-    return type === 'text' ? textArea : uploadZone;
-  }
 
   function typeIcon(t) {
     if (t === 'video') return mp2Icon('video-library', { size: 14 });
@@ -841,9 +1042,9 @@ function mp2ShowUpload() {
     ? '<div style="padding:40px 0;text-align:center;color:var(--faint);font-size:12px">No saved media plans yet.<br>Build one with the AI planner and hit Save.</div>'
     : savedMediaPlansV2.map(function(mp, i) {
         var inputIco =
-          mp.inputType === 'video'    ? mp2Icon('video-library', { size: 14 })
-        : mp.inputType === 'document' ? mp2Icon('description',   { size: 14 })
-        :                               mp2Icon('notes',         { size: 14 });
+          mp.inputType === 'video' ? mp2Icon('video-library', { size: 14 })
+        : mp.inputType === 'vast'  ? mp2Icon('code',          { size: 14 })
+        :                            mp2Icon('description',   { size: 14 }); // brief (document/text)
         var momentsCount = mp.source === 'ai'
           ? (mp.moments || []).length
           : (mp.programs || []).length + (mp.episodes || []).length;
@@ -937,8 +1138,12 @@ function mp2ShowUpload() {
     +           mp2Icon('description', { size: 15 })
     +           '<span>Brief</span>'
     +         '</div>'
+    +         '<div class="tx2-seg" id="tx2-opt-vast" onclick="mp2SelectInput(\'vast\')">'
+    +           mp2Icon('code', { size: 15 })
+    +           '<span>VAST Tag</span>'
+    +         '</div>'
     +       '</div>'
-    +       '<div id="tx2-input-area" style="margin-bottom:16px">' + inputArea('video') + '</div>'
+    +       '<div id="tx2-input-area" style="margin-bottom:16px">' + mp2VideoHtml() + '</div>'
     +       '<div style="margin-bottom:16px">'
     +         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">'
     +           '<div style="display:flex;align-items:center;gap:4px">'
@@ -1136,7 +1341,7 @@ function mp2FlightDdContent() {
 
   // OK button
   html += '<div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px">'
-    + '<button onclick="document.getElementById(\'mp2-flight-dd\').remove()" style="width:100%;height:30px;border-radius:7px;border:1px solid var(--border-md);background:var(--surface);color:var(--text);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit">OK</button>'
+    + '<button onclick="document.getElementById(\'mp2-flight-dd\').remove()" style="width:100%;height:30px;border-radius:4px;border:1px solid var(--border-md);background:var(--surface);color:var(--text);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit">OK</button>'
     + '</div>';
   return html;
 }
@@ -1177,6 +1382,7 @@ function mp2DeletePlan(idx, e) {
   if (e) e.stopPropagation();
   if (!confirm('Delete "' + savedMediaPlansV2[idx].name + '"?')) return;
   savedMediaPlansV2.splice(idx, 1);
+  mp2PersistSession();
   mp2ShowUpload();
 }
 
@@ -1201,7 +1407,7 @@ function mp2RefreshDSP(idx, e) {
 // ── Media Planner v2: self-contained upload → analyze → results flow ─────────
 
 function mp2SelectInput(type) {
-  ['video', 'brief'].forEach(function(t) {
+  ['video', 'brief', 'vast'].forEach(function(t) {
     var el = document.getElementById('tx2-opt-' + t);
     if (el) el.className = 'tx2-seg' + (t === type ? ' tx2-seg--act' : '');
   });
@@ -1209,13 +1415,10 @@ function mp2SelectInput(type) {
   if (!area) return;
   if (type === 'video') {
     mp2TaxInputType = 'video';
-    area.innerHTML =
-      '<div class="tx2-upload-zone" onclick="document.getElementById(\'tx2-file-input-video\').click()">'
-      + '<input type="file" id="tx2-file-input-video" style="display:none" accept="video/*">'
-      + '<div style="color:var(--faint);display:flex">' + mp2Icon('video-library', { size: 28 }) + '</div>'
-      + '<div style="font-size:13px;font-weight:500;color:var(--text);margin-top:6px">Drop video file here</div>'
-      + '<div style="font-size:11px;color:var(--faint);margin-top:2px">MP4, MOV, AVI — up to 2 GB</div>'
-      + '</div>';
+    area.innerHTML = mp2VideoHtml();
+  } else if (type === 'vast') {
+    mp2TaxInputType = 'vast';
+    area.innerHTML = mp2VastHtml();
   } else {
     mp2TaxInputType = 'text';
     area.innerHTML = mp2BriefHtml();
@@ -1240,6 +1443,119 @@ function mp2BriefHtml() {
     + '</div>';
 }
 
+// Videos available to "pull from library" (the path the sales team uses most).
+var TX2_VIDEO_LIBRARY  = ['kroger-ad.mp4', 'parks-and-rec-s04e11.mp4', 'yellowstone-s05e08.mp4'];
+var mp2VideoLibraryChoice = ''; // currently selected library video (wins over a manual upload)
+
+// Placeholder metadata for each library video — drives the results-page asset
+// rail so it reflects the selected asset (all values are demo placeholders).
+var MP2_ASSET_META = {
+  'kroger-ad.mp4':            { advertiser:'Kroger',        domain:'kroger.com',        language:'English', duration:'30s',    format:'MP4', iab:'Grocery & Supermarket', iabPct:'92%', thumb:'/assets/moments/grocery.jpg' },
+  'parks-and-rec-s04e11.mp4': { advertiser:'NBCUniversal',  domain:'nbc.com',           language:'English', duration:'22 min', format:'MP4', iab:'Comedy · Sitcom',       iabPct:'88%', thumb:'/assets/moments/family.jpg' },
+  'yellowstone-s05e08.mp4':   { advertiser:'Paramount',     domain:'paramountplus.com', language:'English', duration:'47 min', format:'MP4', iab:'Drama · Western',       iabPct:'90%', thumb:'/assets/moments/meat.jpg' }
+};
+
+// Resolves the asset shown in the results-page left rail from the current input
+// type / filename. Video & VAST get a preview + ad/video details; briefs get
+// document details and no video preview; uploaded videos show what's knowable
+// without processing (title/format) plus the chosen lookback.
+function mp2AssetMeta() {
+  var name = mp2TaxFileName || 'Untitled';
+  var lbSecs = mp2LookbackSecs || 240;
+  var lookback = lbSecs >= 60 ? Math.round(lbSecs / 60) + ' min' : lbSecs + ' sec';
+  var flight = (mp2FlightDates && mp2FlightDates.start && mp2FlightDates.end)
+    ? (function(s, e){
+        var f = function(d){ return new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }); };
+        return f(s) + ' → ' + f(e);
+      })(mp2FlightDates.start, mp2FlightDates.end)
+    : '—';
+
+  // Brief (typed text or uploaded doc) — no video, document details only.
+  if (mp2TaxInputType === 'text' || mp2TaxInputType === 'doc') {
+    var isDoc = mp2TaxInputType === 'doc';
+    var docFmt = isDoc ? (/\.docx?$/i.test(name) ? 'DOCX' : 'PDF') : 'Text';
+    return {
+      kind: 'brief', name: name, typeLabel: isDoc ? 'Document' : 'Brief', thumb: null, iconName: 'description',
+      rows: [['Type', isDoc ? 'Document' : 'Text brief'], ['Format', docFmt], ['Language', 'English'], isDoc ? ['Pages', '4'] : ['Length', '~1,200 words']],
+      iab: { label: 'Grocery & Supermarket', pct: '88%' }, lookback: lookback, flight: flight
+    };
+  }
+
+  // VAST tag — points to a video creative, so show ad/video details + a preview.
+  if (mp2TaxInputType === 'vast') {
+    return {
+      kind: 'video', name: name, typeLabel: 'VAST Tag', thumb: '/assets/moments/shopping.jpg', iconName: 'code',
+      rows: [['Advertiser', '—'], ['Format', 'VAST 4.0'], ['Language', 'English'], ['Duration', '30s']],
+      iab: { label: 'Retail & Shopping', pct: '90%' }, lookback: lookback, flight: flight
+    };
+  }
+
+  // Video pulled from library — rich placeholder metadata.
+  var meta = MP2_ASSET_META[name];
+  if (meta) {
+    return {
+      kind: 'video', name: name, typeLabel: 'Video', thumb: meta.thumb, iconName: 'video-library',
+      rows: [['Advertiser', meta.advertiser], ['Domain', meta.domain], ['Language', meta.language], ['Duration', meta.duration], ['Format', meta.format]],
+      iab: { label: meta.iab, pct: meta.iabPct }, lookback: lookback, flight: flight
+    };
+  }
+
+  // Uploaded video (not processed in this demo) — only title/format are knowable.
+  var ext = (name.indexOf('.') >= 0 ? name.split('.').pop() : 'mp4').toUpperCase();
+  return {
+    kind: 'video', name: name, typeLabel: 'Video', thumb: null, iconName: 'video-library',
+    rows: [['Format', ext], ['Duration', '—']],
+    iab: null, lookback: lookback, flight: flight
+  };
+}
+
+// Video input: a "Pull from library" dropdown (primary path) plus a file-drop
+// upload zone as the alternative.
+function mp2VideoHtml() {
+  // The "Pull from library" picker is a real MUI <Select> bridged in via
+  // [data-mui-select] (see MuiSelectBridge.tsx) — not a native browser dropdown.
+  return '<div>'
+    + '<div style="font-size:11px;font-weight:500;color:var(--text);margin-bottom:5px">Pull from library</div>'
+    + '<div data-mui-select'
+    +   ' data-on-change="mp2SelectLibraryVideo"'
+    +   ' data-placeholder="Select a video from your library…"'
+    +   ' data-value="' + mp2VideoLibraryChoice.replace(/"/g, '&quot;') + '"'
+    +   " data-options='" + JSON.stringify(TX2_VIDEO_LIBRARY) + "'></div>"
+    + '<div class="tx2-or-divider"><span>or upload a file</span></div>'
+    + '<div class="tx2-upload-zone" onclick="document.getElementById(\'tx2-file-input-video\').click()">'
+    +   '<input type="file" id="tx2-file-input-video" style="display:none" accept="video/*"'
+    +     ' onchange="mp2VideoLibraryChoice=\'\'">'
+    +   '<div style="color:var(--faint);display:flex;justify-content:center">' + mp2Icon('video-library', { size: 28 }) + '</div>'
+    +   '<div style="font-size:13px;font-weight:500;color:var(--text);margin-top:6px">Drop video file here</div>'
+    +   '<div style="font-size:11px;color:var(--faint);margin-top:2px">MP4, MOV, AVI — up to 2 GB</div>'
+    + '</div>'
+    + '</div>';
+}
+
+function mp2SelectLibraryVideo(name) {
+  mp2VideoLibraryChoice = name || '';
+  if (name) mp2TaxInputType = 'video';
+}
+
+// VAST tag input: paste a VAST URL/XML string, or upload a CSV of VAST tags.
+function mp2VastHtml() {
+  return '<div style="border:1px solid var(--border-md);border-radius:8px;overflow:hidden;background:var(--surface)">'
+    + '<textarea id="tx2-vast-input"'
+    + ' placeholder="Paste a VAST tag URL or XML here. The AI will analyse the creative it points to for moments and taxonomy classifications…"'
+    + ' style="width:100%;box-sizing:border-box;min-height:160px;resize:none;border:none;outline:none;padding:10px 12px;font-size:13px;font-family:inherit;color:var(--text);background:transparent;display:block"></textarea>'
+    + '<div style="height:1px;background:var(--border)"></div>'
+    + '<label for="tx2-file-input-vast" data-mui-tip="Single tag only"'
+    +   ' style="display:flex;align-items:center;gap:7px;padding:8px 12px;cursor:pointer;color:var(--muted);font-size:12px;transition:background .13s,color .13s;border-radius:0 0 8px 8px"'
+    +   ' onmouseenter="this.style.background=\'var(--bg)\';this.style.color=\'var(--text)\'"'
+    +   ' onmouseleave="this.style.background=\'\';this.style.color=\'var(--muted)\'">'
+    +   mp2Icon('description', { size: 15 })
+    +   '<span id="tx2-vast-file-label">Upload CSV with VAST tag</span>'
+    + '</label>'
+    + '<input type="file" id="tx2-file-input-vast" style="display:none" accept=".csv"'
+    +   ' onchange="var n=this.files[0]?this.files[0].name:\'\';document.getElementById(\'tx2-vast-file-label\').textContent=n||\'Upload CSV with VAST tag\'">'
+    + '</div>';
+}
+
 function mp2Analyze() {
   var ca = document.getElementById('tx2-content-area');
   if (!ca) return;
@@ -1256,11 +1572,20 @@ function mp2Analyze() {
   mp2MfScore = 'all'; mp2MfChannels = []; mp2MfCpmMin = 0; mp2MfCpmMax = 50; mp2MfTypes = []; mp2MfPlatforms = [];
   mp2MomentType = 'ads';
   inv2MediaPlanVisible = false;
+  mp2EditingPlanIdx = null; // brand-new plan, not editing a saved one
 
   if (mp2TaxInputType === 'text') {
     var ta = document.getElementById('tx2-text-input');
     var raw = ta ? ta.value.trim() : '';
     mp2TaxFileName = raw.length ? (raw.slice(0, 42) + (raw.length > 42 ? '…' : '')) : 'Free text input';
+  } else if (mp2TaxInputType === 'vast') {
+    var vf = document.getElementById('tx2-file-input-vast');
+    var vi = document.getElementById('tx2-vast-input');
+    var vpaste = vi ? vi.value.trim() : '';
+    mp2TaxFileName = (vf && vf.files && vf.files[0]) ? vf.files[0].name
+      : (vpaste ? 'VAST tag (pasted)' : 'VAST tag');
+  } else if (mp2TaxInputType === 'video' && mp2VideoLibraryChoice) {
+    mp2TaxFileName = mp2VideoLibraryChoice; // pulled from library
   } else {
     var fi = document.getElementById('tx2-file-input-' + mp2TaxInputType);
     mp2TaxFileName = (fi && fi.files && fi.files[0]) ? fi.files[0].name
@@ -1269,6 +1594,7 @@ function mp2Analyze() {
 
   var typeLabel = mp2TaxInputType === 'video' ? 'video file'
                : mp2TaxInputType === 'doc'   ? 'document'
+               : mp2TaxInputType === 'vast'  ? 'VAST tag'
                : 'text input';
 
   var progressSteps = ['Analyzing metadata…','Detecting scenes & objects…','Classifying moments…','Building taxonomy map…','Matching episodes & shows…'];
@@ -1346,17 +1672,18 @@ function mp2ShowResults() {
   mp2TaxStep = 'results';
   var ca = document.getElementById('tx2-content-area');
   if (!ca) return;
+  mp2CurrentView = { type: 'results' };
   var TH = 'padding:9px 12px;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;color:var(--faint);border-bottom:1px solid var(--border)';
   var fileIcon = mp2TaxInputType === 'video' ? mp2Icon('video-library', { size: 14 })
-               : mp2TaxInputType === 'doc'   ? mp2Icon('description',   { size: 14 })
-               :                               mp2Icon('notes',         { size: 14 });
+               : mp2TaxInputType === 'vast'  ? mp2Icon('code',          { size: 14 })
+               :                               mp2Icon('description',   { size: 14 }); // brief (doc/text)
 
   var pgname = document.getElementById('content-bc');
   if (pgname) pgname.innerHTML =
     '<span style="font-weight:400;opacity:.55;cursor:pointer" onclick="mp2ShowUpload()">Media Planner (v2)</span>'
     + ' &nbsp;/&nbsp; Analysis';
 
-  var typeLabel = mp2TaxInputType === 'video' ? 'Video' : mp2TaxInputType === 'doc' ? 'Document' : 'Text';
+  var typeLabel = mp2TaxInputType === 'video' ? 'Video' : mp2TaxInputType === 'doc' ? 'Document' : mp2TaxInputType === 'vast' ? 'VAST Tag' : 'Text';
 
   mp2SetBackLink('Back to Media Planner', 'mp2ShowUpload()');
   mp2SetTitle('Media Plan Builder', 'Select parameters below based on moments from content associated with the initial video or brief requirements. This will help fine tune your media plan for the best results for your client.');
@@ -1364,46 +1691,47 @@ function mp2ShowResults() {
   ca.innerHTML =
     '<div class="mp2-results-row">'
     + '<div class="mp2-results-rail">'
-    +   '<div>'
-    +     '<div style="position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;margin-bottom:10px">'
-    +       '<img id="tx-thumb-img" src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=640&h=360&fit=crop&q=80" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:#e5e7eb">'
-    +       '<div style="position:absolute;inset:0;background:rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center">'
-    +         '<div style="width:26px;height:26px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center">'
-    +           mp2Icon('play-arrow', { size: 14, color: '#111' })
-    +         '</div>'
-    +       '</div>'
-    +     '</div>'
-    +     '<div style="font-size:12px;font-weight:600;color:var(--text);word-break:break-word;line-height:1.4;margin-bottom:6px">kroger-ad.mp4</div>'
-    +     '<div style="display:flex;align-items:center;gap:5px;margin-bottom:10px">'
-    +       '<span style="font-size:10px;color:var(--muted);display:flex;align-items:center;gap:3px">' + fileIcon + ' ' + typeLabel + '</span>'
-    +     '</div>'
-    +   '</div>'
-    +   '<div style="display:flex;flex-direction:column;gap:0">'
     + (function() {
+        var m = mp2AssetMeta();
         var adRow = function(label, val) {
           return '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;border-bottom:1px solid var(--border)">'
             + '<span style="font-size:10px;color:var(--faint);flex-shrink:0;margin-right:6px">' + label + '</span>'
             + '<span style="font-size:10px;font-weight:500;color:var(--text);text-align:right;word-break:break-all">' + val + '</span>'
             + '</div>';
         };
-        var lbSecs = mp2LookbackSecs || 240;
-        var lbLabel = lbSecs >= 60 ? Math.round(lbSecs / 60) + ' min' : lbSecs + ' sec';
-        var fdLabel = (mp2FlightDates && mp2FlightDates.start && mp2FlightDates.end)
-          ? (function(s,e){ return new Date(s+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) + ' → ' + new Date(e+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); })(mp2FlightDates.start, mp2FlightDates.end)
-          : '—';
-        return adRow('Advertiser','Kroger') + adRow('Domain','kroger.com')
-          + adRow('Language','English') + adRow('Duration','30s') + adRow('Format','MP4')
-          + '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)">'
-          +   '<span style="font-size:10px;color:var(--faint);flex-shrink:0;margin-right:6px">IAB</span>'
-          +   '<span style="display:flex;align-items:center;gap:5px;justify-content:flex-end;flex-wrap:wrap">'
-          +     '<span style="font-size:10px;font-weight:500;color:var(--text);text-align:right">Grocery & Supermarket</span>'
-          +     '<span style="font-size:9px;font-weight:600;color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;padding:1px 6px;white-space:nowrap">92%</span>'
-          +   '</span>'
+        var preview = m.thumb
+          ? '<div style="position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;margin-bottom:10px">'
+            +   '<img src="' + m.thumb + '" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:#e5e7eb">'
+            +   '<div style="position:absolute;inset:0;background:rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center">'
+            +     '<div style="width:26px;height:26px;background:rgba(255,255,255,.9);border-radius:50%;display:flex;align-items:center;justify-content:center">' + mp2Icon('play-arrow', { size: 14, color: '#111' }) + '</div>'
+            +   '</div>'
+            + '</div>'
+          : '<div style="position:relative;width:100%;padding-top:56.25%;border-radius:8px;overflow:hidden;margin-bottom:10px;background:var(--bg);border:1px solid var(--border)">'
+            +   '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--faint)">' + mp2Icon(m.iconName, { size: 30 }) + '</div>'
+            + '</div>';
+        var iabHtml = m.iab
+          ? '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border)">'
+            +   '<span style="font-size:10px;color:var(--faint);flex-shrink:0;margin-right:6px">IAB</span>'
+            +   '<span style="display:flex;align-items:center;gap:5px;justify-content:flex-end;flex-wrap:wrap">'
+            +     '<span style="font-size:10px;font-weight:500;color:var(--text);text-align:right">' + m.iab.label + '</span>'
+            +     '<span style="font-size:9px;font-weight:600;color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;padding:1px 6px;white-space:nowrap">' + m.iab.pct + '</span>'
+            +   '</span>'
+            + '</div>'
+          : '';
+        return '<div>'
+          + preview
+          + '<div style="font-size:12px;font-weight:600;color:var(--text);word-break:break-word;line-height:1.4;margin-bottom:6px">' + m.name + '</div>'
+          + '<div style="display:flex;align-items:center;gap:5px;margin-bottom:10px">'
+          +   '<span style="font-size:10px;color:var(--muted);display:flex;align-items:center;gap:3px">' + fileIcon + ' ' + m.typeLabel + '</span>'
           + '</div>'
-          + adRow('Lookback', lbLabel)
-          + adRow('Flight Dates', fdLabel);
+          + '</div>'
+          + '<div style="display:flex;flex-direction:column;gap:0">'
+          +   m.rows.map(function(r){ return adRow(r[0], r[1]); }).join('')
+          +   iabHtml
+          +   adRow('Lookback', m.lookback)
+          +   adRow('Flight Dates', m.flight)
+          + '</div>';
       })()
-    +   '</div>'
     + '</div>'
 
     + '<div class="mp2-results-divider"></div>'
@@ -1732,7 +2060,7 @@ function aiRerenderEditor(param) {
 
 function aiDdOkBtn() {
   return '<div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px">'
-    + '<button onclick="aiCloseDropdown()" style="width:100%;height:30px;border-radius:7px;border:1px solid var(--border-md);background:var(--surface);color:var(--text);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:background .12s" onmouseenter="this.style.background=\'var(--bg)\'" onmouseleave="this.style.background=\'var(--surface)\'">OK</button>'
+    + '<button onclick="aiCloseDropdown()" style="width:100%;height:30px;border-radius:4px;border:1px solid var(--border-md);background:var(--surface);color:var(--text);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:background .12s" onmouseenter="this.style.background=\'var(--bg)\'" onmouseleave="this.style.background=\'var(--surface)\'">OK</button>'
     + '</div>';
 }
 
@@ -2285,7 +2613,7 @@ function csTx2BuildAIParamsPanel() {
 
     // Button — inside the same wrapper, same gap
     + '<div style="display:flex;justify-content:center">'
-    +   '<button onclick="csTx2GenerateAIMediaPlan()" style="height:38px;padding:0 22px;display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:9px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">'
+    +   '<button onclick="csTx2GenerateAIMediaPlan()" style="height:38px;padding:0 22px;display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:4px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">'
     +     '<svg width="13" height="13" viewBox="0 0 16 16" fill="#fff"><path d="M6 1L7.3 4.7 11 6 7.3 7.3 6 11 4.7 7.3 1 6 4.7 4.7Z"/><path d="M12.5 0.5L13.3 2.7 15.5 3.5 13.3 4.3 12.5 6.5 11.7 4.3 9.5 3.5 11.7 2.7Z" opacity=".8"/></svg>'
     +     'Generate AI Plan'
     +   '</button>'
@@ -2552,7 +2880,7 @@ function aiRenderResultsPanel() {
     + '<div style="padding-top:12px;flex-shrink:0;display:flex;flex-direction:column;gap:8px">'
     +   '<div style="display:flex;gap:8px;align-items:center">'
     +     '<input id="ai-plan-name" class="ai-input" placeholder="Media plan name…" style="flex:1;height:38px">'
-    +     '<button onclick="aiSaveAIMediaPlan()" style="height:38px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:9px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap">'
+    +     '<button onclick="aiSaveAIMediaPlan()" style="height:38px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:4px;border:none;background:var(--accent);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;white-space:nowrap">'
     +       mp2Icon('description', { size: 14, color: '#fff' })
     +       'Save as Media Plan'
     +     '</button>'
@@ -2628,9 +2956,9 @@ function mp2RenderAIPlansPanel(highlightIdx) {
   panel.innerHTML = savedMediaPlansV2.map(function(mp, i) {
     var isNew = (i === highlightIdx);
     var inputIco =
-      mp.inputType === 'video'    ? mp2Icon('video-library', { size: 14 })
-    : mp.inputType === 'document' ? mp2Icon('description',   { size: 14 })
-    :                               mp2Icon('notes',         { size: 14 });
+      mp.inputType === 'video' ? mp2Icon('video-library', { size: 14 })
+    : mp.inputType === 'vast'  ? mp2Icon('code',          { size: 14 })
+    :                            mp2Icon('description',   { size: 14 }); // brief (document/text)
     var momentsCount = mp.source === 'ai'
       ? (mp.moments || []).length
       : (mp.programs || []).length + (mp.episodes || []).length;
@@ -2931,7 +3259,7 @@ function inv2RenderFilters() {
   if (!wrap) return;
   wrap.innerHTML =
     // Left: filter button + chips
-    '<button id="inv-filter-btn" onclick="inv2ToggleFilterPanel()" style="display:flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--muted);cursor:pointer;font-size:12px;flex-shrink:0;position:relative">'
+    '<button id="inv-filter-btn" onclick="inv2ToggleFilterPanel()" style="display:flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--muted);cursor:pointer;font-size:12px;flex-shrink:0;position:relative">'
     +   mp2Icon('filter-list', { size: 14 })
     +   'Filters'
     +   '<span id="inv-filter-badge" style="display:none;position:absolute;top:-5px;right:-5px;width:16px;height:16px;background:var(--accent);color:#fff;border-radius:50%;font-size:9px;font-weight:700;align-items:center;justify-content:center">0</span>'
@@ -3117,6 +3445,8 @@ function inv2SaveMediaPlan() {
     dollars:     totalDollars > 0 ? inv2FmtDollars(totalDollars) : null
   });
   if (nameInput) nameInput.value = '';
+  mp2PersistSession();
+  if (window.mp2Notify) window.mp2Notify('Media plan "' + planName + '" saved to Your Media Plans', { actionLabel: 'View plan', planIdx: savedMediaPlansV2.length - 1 });
   // Flash confirm
   var btn = document.querySelector('#inv-media-plan button[onclick="inv2SaveMediaPlan()"]');
   if (btn) { btn.textContent = '✓'; setTimeout(function(){ btn.textContent = 'Save'; }, 1200); }
@@ -3126,19 +3456,40 @@ function mp2SaveMomentsMediaPlan() {
   var names = Object.keys(mp2SelectedMoments).filter(function(n) { return mp2SelectedMoments[n]; });
   if (names.length === 0) return;
 
-  var defaultName = 'Media Plan ' + (savedMediaPlansV2.length + 1);
+  // Are we re-saving a plan opened via "Add more moments"? If so, update it in
+  // place and keep its name instead of creating a new plan.
+  var editIdx = (typeof mp2EditingPlanIdx === 'number' && savedMediaPlansV2[mp2EditingPlanIdx]) ? mp2EditingPlanIdx : null;
+  var editing = editIdx !== null;
+  var defaultName = editing ? savedMediaPlansV2[editIdx].name : 'Media Plan ' + (savedMediaPlansV2.length + 1);
 
   function commit(planName) {
     var moments = [];
     var totalImpM = 0;
+    // Same multipliers the moment cards use, so saved stats match what was on screen.
+    var cpmMult = mp2MomentType === 'live' ? 1.55 : mp2MomentType === 'organic' ? 0.68 : 1.0;
+    var impMult = mp2MomentType === 'live' ? 0.55 : mp2MomentType === 'organic' ? 1.45 : 1.0;
     names.forEach(function(n) {
-      var cat = TX_CATEGORIES.filter(function(c) { return c.name === n; })[0] || {};
+      var cat     = TX_CATEGORIES.filter(function(c) { return c.name === n; })[0] || {};
+      var attrs   = mp2MomentCardAttrs({ name: n, score: cat.score || 0 });
       var refined = mp2RefinedStats[n];
-      var seed = n.split('').reduce(function(a, ch) { return a + ch.charCodeAt(0); }, 0);
-      var inv  = refined ? refined.inventory : (cat.assets || 0);
-      var impM = refined ? parseFloat(refined.impM) : (1.5 + ((seed * 3 + (cat.score || 0) * 7) % 85) / 10);
+      var rawImpM = 1.5 + ((attrs.seed * 3 + (cat.score || 0) * 7) % 85) / 10;
+      var inv     = refined ? refined.inventory : (cat.assets || 0);
+      var impM    = refined ? parseFloat(refined.impM) : (rawImpM * impMult);
+      var cpm     = refined ? refined.cpm : Math.round(attrs.cpm * cpmMult);
+      var impLabel = impM >= 1 ? impM.toFixed(1) + 'M' : Math.round(impM * 1000) + 'K';
       totalImpM += impM;
-      moments.push({ name: n, inventory: inv, impM: impM });
+      moments.push({
+        name:             n,
+        channels:         attrs.channels,
+        inventory:        inv,
+        cpm:              cpm,
+        impressionsNum:   impM,
+        impressionsLabel: impLabel,
+        type:             mp2MomentType,
+        // Stored so "Add more moments" can restore the plan's refinements intact.
+        refinedStats:     refined ? Object.assign({}, refined) : null,
+        refinements:      mp2SavedRefinements[n] ? Object.assign({}, mp2SavedRefinements[n]) : null
+      });
     });
 
     var now      = new Date();
@@ -3149,18 +3500,38 @@ function mp2SaveMomentsMediaPlan() {
       ? 'document'
       : (mp2TaxInputType || 'text');
 
-    savedMediaPlansV2.push({
-      name:        planName,
-      date:        dateStr,
-      author:      author,
-      source:      'ai',
-      inputType:   inputType,
-      moments:     moments,
-      impressions: totalImpM.toFixed(1) + 'M'
-    });
+    var savedIdx;
+    if (editing) {
+      // Update the existing plan in place — keep its identity (date/author/source).
+      var ex = savedMediaPlansV2[editIdx];
+      ex.name        = planName;
+      ex.moments     = moments;
+      ex.impressions = totalImpM.toFixed(1) + 'M';
+      savedIdx = editIdx;
+    } else {
+      savedMediaPlansV2.push({
+        name:        planName,
+        date:        dateStr,
+        author:      author,
+        source:      'ai',
+        inputType:   inputType,
+        moments:     moments,
+        impressions: totalImpM.toFixed(1) + 'M'
+      });
+      savedIdx = savedMediaPlansV2.length - 1;
+    }
+    mp2EditingPlanIdx = null; // exit edit mode
 
     // Land on Media Plans tab when the user navigates back home.
     mp2HomeTab = 'plans';
+    mp2PersistSession(); // durably save the new/updated plan
+
+    if (window.mp2Notify) {
+      window.mp2Notify(
+        'Media plan "' + planName + '" ' + (editing ? 'updated' : 'saved to Your Media Plans'),
+        { actionLabel: 'View plan', planIdx: savedIdx }
+      );
+    }
 
     var btn = document.querySelector('#inv-media-plan button[onclick="mp2SaveMomentsMediaPlan()"]');
     if (btn) {
@@ -3177,7 +3548,10 @@ function mp2SaveMomentsMediaPlan() {
     }, 1200);
   }
 
-  if (typeof window.openSaveMediaPlanDialog === 'function') {
+  if (editing) {
+    // Re-saving an existing plan — keep its name, no rename prompt.
+    commit(defaultName);
+  } else if (typeof window.openSaveMediaPlanDialog === 'function') {
     window.openSaveMediaPlanDialog(defaultName, commit);
   } else {
     commit(defaultName);
@@ -3534,7 +3908,7 @@ function mp2ShowExamples(momentName, score, assets, btn) {
           + '</div>';
       }).join('')
     + '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">'
-    +   '<button onclick="this.closest(\'.mp2-examples-tt\').remove();txShowAssetsView(\'' + momentName.replace(/'/g, "\\'") + '\',' + score + ',' + assets + ')" style="width:100%;padding:7px 10px;font-size:11px;font-weight:500;font-family:inherit;border:1px solid var(--border-md);border-radius:7px;background:var(--bg);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .12s" onmouseenter="this.style.background=\'var(--surface)\'" onmouseleave="this.style.background=\'var(--bg)\'">'
+    +   '<button onclick="this.closest(\'.mp2-examples-tt\').remove();txShowAssetsView(\'' + momentName.replace(/'/g, "\\'") + '\',' + score + ',' + assets + ')" style="width:100%;padding:7px 10px;font-size:11px;font-weight:500;font-family:inherit;border:1px solid var(--border-md);border-radius:4px;background:var(--bg);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .12s" onmouseenter="this.style.background=\'var(--surface)\'" onmouseleave="this.style.background=\'var(--bg)\'">'
     +     '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3" width="13" height="9" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 12.5v1M10.5 12.5v1M3.5 13.5h9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M4.5 7.5h7M4.5 5.5h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity=".6"/></svg>'
     +     'See full inventory'
     +   '</button>'
@@ -4310,6 +4684,10 @@ var mp2RefinedStats    = {}; // { momentName: { inventory, cpm, impM } }
 var mp2SavedRefinements = {}; // { momentName: { 'tab::taxonomy': 'up'|'down' } } — persisted votes so reopening the modal restores them
 var mp2SelectedMoments = {}; // { momentName: true }
 var mp2MomentType      = 'ads';  // 'ads' | 'organic'
+// Index of the saved plan currently being edited (via "Add more moments"), or
+// null when building a brand-new plan. When set, saving updates that plan in
+// place (same name) instead of pushing a new one.
+var mp2EditingPlanIdx  = null;
 
 // ── Moments filter state ──────────────────────────────────────────────────────
 var mp2MfScore         = 'all';  // 'all' | 'high' | 'standard'
@@ -4334,7 +4712,7 @@ function mp2InjectRefineStyles() {
     '.mp2-ref-row:hover{background:var(--bg)}',
     '.mp2-ref-controls{display:flex;align-items:center;gap:8px;flex-shrink:0}',
     '@media (max-width:560px){.mp2-ref-row{flex-direction:column;align-items:stretch;gap:6px}.mp2-ref-controls{width:100%;justify-content:flex-end}}',
-    '.mp2-thumb{width:26px;height:26px;border-radius:6px;border:1px solid var(--border-md);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:background .12s,border-color .12s;flex-shrink:0;line-height:1}',
+    '.mp2-thumb{width:26px;height:26px;border-radius:4px;border:1px solid var(--border-md);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:background .12s,border-color .12s;flex-shrink:0;line-height:1}',
     '.mp2-thumb:hover{background:var(--bg)}',
     '.mp2-thumb--up.mp2-thumb--act{background:#f0fdf4;border-color:#86efac}',
     '.mp2-thumb--down.mp2-thumb--act{background:#fff1f2;border-color:#fca5a5}',
@@ -4768,26 +5146,38 @@ function mp2RenderMomentsMediaPlan() {
     +   '<span style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--faint)">Est. Impressions</span>'
     +   '<span style="font-size:12px;font-weight:700;color:var(--text)">' + totalImpM.toFixed(1) + 'M</span>'
     + '</div>'
-    + '<button onclick="mp2SaveMomentsMediaPlan()" style="width:100%;height:34px;font-size:12px;font-weight:600;font-family:inherit;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;transition:opacity .13s" onmouseenter="this.style.opacity=\'.88\'" onmouseleave="this.style.opacity=\'1\'">Save Media Plan</button>'
+    + '<button onclick="mp2SaveMomentsMediaPlan()" style="width:100%;height:34px;font-size:12px;font-weight:600;font-family:inherit;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;transition:opacity .13s" onmouseenter="this.style.opacity=\'.88\'" onmouseleave="this.style.opacity=\'1\'">Save Media Plan</button>'
     + '</div>';
-  // Set bundled thumbnails for plan items (local images, no API dependency).
+  // Fetch thumbnails for plan items (accurate runtime images); fall back to a
+  // bundled local image so a live demo never shows blank thumbnails.
   names.forEach(function(n) {
-    var imgDiv = document.getElementById('mp2-plan-img-' + n.replace(/[^a-zA-Z0-9]/g, '-'));
-    if (!imgDiv) return;
-    var img = new Image();
-    img.onload = function() {
-      imgDiv.innerHTML = '';
-      var el = document.createElement('img');
-      el.src = img.src; el.style.cssText = 'width:100%;height:100%;object-fit:cover';
-      imgDiv.appendChild(el);
+    var safe = n.replace(/[^a-zA-Z0-9]/g, '-');
+    var setImg = function(srcUrl) {
+      var img = new Image();
+      img.onload = function() {
+        var d = document.getElementById('mp2-plan-img-' + safe);
+        if (!d) return;
+        d.innerHTML = '';
+        var el = document.createElement('img');
+        el.src = srcUrl; el.style.cssText = 'width:100%;height:100%;object-fit:cover';
+        d.appendChild(el);
+      };
+      img.onerror = function() {
+        var fb = mp2MomentImageSrc(n);
+        if (srcUrl !== fb) setImg(fb);
+      };
+      img.src = srcUrl;
     };
-    img.src = mp2MomentImageSrc(n);
+    fetch('/api/unsplash?q=' + encodeURIComponent(n + ' tv show'))
+      .then(function(r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function(data) { setImg(data.thumb || mp2MomentImageSrc(n)); })
+      .catch(function() { setImg(mp2MomentImageSrc(n)); });
   });
 }
 
-// Bundled moment images (see /public/assets/moments/). Shared theme with the
-// React grid's MOMENT_IMAGES map (MomentsGrid.tsx). Self-contained so the demo
-// needs no Unsplash key on Vercel.
+// Bundled fallback images (see /public/assets/moments/). Shared theme with the
+// React grid's MOMENT_IMAGES map (MomentsGrid.tsx). Used only if the runtime
+// /api/unsplash lookup fails, so the demo never shows blank thumbnails.
 var MP2_MOMENT_IMAGES = {
   'Family Dinner Time': 'family',
   'Grocery Shopping': 'shopping',
@@ -4980,7 +5370,7 @@ function txOpenAdModal(type, panelType) {
     +   '<div id="tx-ad-modal-json" style="display:' + (showJson ? 'flex' : 'none') + ';flex-direction:column;width:300px;flex-shrink:0;background:#14161a;border-left:1px solid #2a2d35">'
     +     '<div style="display:flex;align-items:center;padding:9px 12px;border-bottom:1px solid #2a2d35;flex-shrink:0;gap:6px">'
     +       '<span style="font-size:11px;font-weight:600;color:#e2e4e9">JSON</span><div style="flex:1"></div>'
-    +       '<button id="tx-ad-modal-copy-btn" onclick="txCopyAdJson()" style="border:1px solid #2a2d35;background:#1e2028;color:#8b8fa8;font-size:10px;font-family:inherit;border-radius:5px;padding:2px 8px;cursor:pointer">Copy</button>'
+    +       '<button id="tx-ad-modal-copy-btn" onclick="txCopyAdJson()" style="border:1px solid #2a2d35;background:#1e2028;color:#8b8fa8;font-size:10px;font-family:inherit;border-radius:4px;padding:2px 8px;cursor:pointer">Copy</button>'
     +     '</div>'
     +     '<pre id="tx-ad-modal-json-pre" style="margin:0;padding:12px;font-size:10px;line-height:1.55;overflow:auto;flex:1;color:#c9d1d9;font-family:\'SF Mono\',\'Fira Code\',monospace;white-space:pre">' + txAdModalJsonStr.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</pre>'
     +   '</div>'

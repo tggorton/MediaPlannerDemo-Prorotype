@@ -61,6 +61,27 @@ export function MuiTipController() {
     };
   }, []);
 
+  // Safety net for "stuck" tooltips: when the anchor is removed from the DOM
+  // (a legacy re-render or page navigation) no mouseout fires, so the Popper
+  // would stay open anchored to a detached node. Watch for that, and also
+  // dismiss on any click or scroll — by then the pointer has clearly moved on.
+  useEffect(() => {
+    if (!anchor) return;
+    const dismiss = () => setAnchor(null);
+    const checkConnected = () => {
+      if (!anchor.isConnected) dismiss();
+    };
+    const mo = new MutationObserver(checkConnected);
+    mo.observe(document.body, { childList: true, subtree: true });
+    document.addEventListener('click', dismiss, true);
+    window.addEventListener('scroll', dismiss, true);
+    return () => {
+      mo.disconnect();
+      document.removeEventListener('click', dismiss, true);
+      window.removeEventListener('scroll', dismiss, true);
+    };
+  }, [anchor]);
+
   const hasContent = Boolean(data.text || data.title || data.list?.length);
   const open = Boolean(anchor) && hasContent;
 

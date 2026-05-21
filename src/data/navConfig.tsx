@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
-import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import DocumentScannerIcon from '@mui/icons-material/DocumentScannerOutlined';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideoOutlined';
 
 export type NavItem = {
   id: string;

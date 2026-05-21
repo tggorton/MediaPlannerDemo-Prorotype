@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { LoginScreen } from './components/LoginScreen';
+import { AuthProvider, useAuth } from '@/features/auth/AuthContext';
+import { LoginScreen } from '@/features/auth/LoginScreen';
 import { AppShell } from './layouts/AppShell';
 import { MetadataAnalysis } from './pages/MetadataAnalysis';
 import { MediaPlannerV2 } from './pages/MediaPlannerV2';

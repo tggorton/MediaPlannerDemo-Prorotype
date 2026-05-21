@@ -5,7 +5,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import KeyboardDoubleArrowRight from '@mui/icons-material/KeyboardDoubleArrowRight';
 import KeyboardDoubleArrowLeft from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import { NAV_CONFIG } from '../data/navConfig';
+import { NAV_CONFIG } from '@/data/navConfig';
 
 type SidebarProps = {
   collapsed: boolean;
@@ -30,7 +30,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       {/* Collapse toggle row */}
       <Box
         sx={{
-          pt: '33px',
+          pt: '24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: collapsed ? 'center' : 'flex-end',
@@ -39,10 +39,9 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         }}
       >
         <IconButton
-          size="small"
           onClick={onToggle}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          sx={{ color: 'grey.500' }}
+          sx={{ color: 'grey.500', width: 44, height: 44, borderRadius: 2 }}
         >
           {collapsed ? (
             <KeyboardDoubleArrowRight fontSize="small" />
@@ -52,7 +51,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </IconButton>
       </Box>
 
-      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', pt: '33px' }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', pt: '16px' }}>
         {NAV_CONFIG.map((sec) => {
           const sectionIsCollapsed = !!sectionCollapsed[sec.section];
           return (
@@ -96,13 +95,13 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         disabled={item.disabled}
                         selected={isActive}
                         sx={{
-                          minHeight: 40,
-                          borderRadius: 1.25,
+                          minHeight: 44,
+                          borderRadius: 2,
                           py: 0.5,
-                          mb: 0.5,
+                          mb: collapsed ? 2 : 0.5,
                           justifyContent: collapsed ? 'center' : 'flex-start',
                           ...(collapsed
-                            ? { width: 40, minWidth: 40, height: 40, p: 0, mx: 'auto' }
+                            ? { width: 44, minWidth: 44, height: 44, p: 0, mx: 'auto' }
                             : { px: 1 }),
                           // Override MUI's default selected hover so it stays
                           // the kit's grey rather than blending with primary.

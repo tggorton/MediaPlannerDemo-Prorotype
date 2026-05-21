@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { useBridgeNodes } from '../utils/useBridgeNodes';
+import { useBridgeNodes } from '@/bridges/useBridgeNodes';
 
 // MUI ToggleButtonGroup for the Moments-Match supply type (VoD / Organic Pause /
 // Live). Reads/writes window.mp2MomentType via window.mp2SetMomentType, which

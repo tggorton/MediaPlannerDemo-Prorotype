@@ -1,11 +1,11 @@
 import { useState, type ReactNode } from 'react';
 import { Box } from '@mui/material';
-import { Sidebar } from '../components/Sidebar';
-import { AppHeader } from '../components/AppHeader';
-import { MuiTipController } from '../components/MuiTipController';
+import { Sidebar } from '@/layouts/Sidebar';
+import { AppHeader } from '@/layouts/AppHeader';
+import { MuiTipController } from '@/bridges/MuiTipController';
 
-const COL_EXPANDED = 240;
-const COL_COLLAPSED = 68;
+const COL_EXPANDED = 220;
+const COL_COLLAPSED = 64; // Figma sidebar (node 16954-255703) is 64px wide
 const SHELL_TRANSITION = 'width 0.22s cubic-bezier(0.4, 0, 0.2, 1)';
 
 /**
@@ -35,8 +35,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           // primitive from kerv-one-theme.
           bgcolor: 'rgba(255, 255, 255, 0.4)',
           backdropFilter: 'blur(8px)',
-          borderRight: '1px solid rgba(255, 255, 255, 0.8)',
-          boxShadow: '0px 4px 8px 0px rgba(0, 0, 0, 0.04)',
+          borderRight: '2px solid #ffffff',
+          boxShadow: '4px 0px 8px 0px rgba(0, 0, 0, 0.05)',
           overflow: 'hidden',
         }}
       >
@@ -44,7 +44,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       </Box>
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <AppHeader />
-        <Box className="content" sx={{ flex: 1, overflowY: 'auto', p: { xs: '12px', sm: '16px', md: '20px 28px' } }}>
+        {/* md padding was '20px 28px' before the reference-match pass — revert there if needed.
+            Horizontal 32px matches the reference gutter (sidebar↔card and card↔right-edge). */}
+        <Box className="content" sx={{ position: 'relative', flex: 1, overflowY: 'auto', p: { xs: '12px', sm: '16px', md: '16px 32px' } }}>
           {children}
         </Box>
       </Box>
