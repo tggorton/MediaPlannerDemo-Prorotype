@@ -21,6 +21,10 @@ dist-ssr
 !.env.example
 .vercel
 
+# Local-only scratch / working folder — never commit or push
+_Temp/
+_temp/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

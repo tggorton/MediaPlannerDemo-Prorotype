@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body { font: 11px/1.45 'Inter', -apple-system, sans-serif; margin: 0; padding: 12px; color: #111; }
+      h3 { margin: 0 0 4px; font-size: 12px; }
+      .hint { color: #666; margin: 0 0 10px; }
+      button { font: inherit; font-weight: 600; border: none; border-radius: 6px; padding: 7px 10px; cursor: pointer; }
+      .primary { background: #ED005E; color: #fff; }
+      .ghost { background: #eee; color: #222; }
+      .row { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; }
+      input[type=text] { flex: 1; font: inherit; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; }
+      textarea { width: 100%; box-sizing: border-box; height: 120px; font: 10px/1.4 monospace; border: 1px solid #ccc; border-radius: 6px; padding: 6px; resize: vertical; }
+      .sec { border-top: 1px solid #eee; margin-top: 12px; padding-top: 12px; }
+      #log { white-space: pre-wrap; font: 10px/1.4 monospace; background: #faf7f8; border: 1px solid #f0e3e9; border-radius: 6px; padding: 8px; max-height: 150px; overflow: auto; margin-top: 8px; }
+      label { font-weight: 600; display: block; margin-bottom: 4px; }
+      .opt { display: flex; align-items: flex-start; gap: 6px; margin: 4px 0; font-weight: 400; }
+      .opt input { margin: 2px 0 0; }
+      .opt .sub { color: #666; font-size: 10px; }
+      .opt-box { background: #faf7f8; border: 1px solid #f0e3e9; border-radius: 6px; padding: 8px 10px; margin-bottom: 10px; }
+    </style>
+  </head>
+  <body>
+    <h3>KERV Componentizer</h3>
+    <p class="hint">Turns an html.to.design import into named components. Select an imported screen frame first (or run on the whole page).</p>
+
+    <div class="opt-box">
+      <label>Auto-layout</label>
+      <div class="opt">
+        <input type="checkbox" id="al" />
+        <span>Apply auto-layout to converted components
+          <span class="sub">infers vertical/horizontal from child positions; preserves spacing &amp; padding</span>
+        </span>
+      </div>
+      <div class="opt">
+        <input type="checkbox" id="alrec" />
+        <span>…and to nested frames too (recursive)
+          <span class="sub">deepest-first; more thorough but more aggressive</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="sec">
+      <label>1 · Auto-componentize (by layer name)</label>
+      <p class="hint">Edit the map if needed — <code>"layer name": "ComponentName"</code>. Converts the first match of each.</p>
+      <textarea id="map"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="primary" id="auto">Run auto-componentize</button>
+        <button class="ghost" id="scan">Scan layer names</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <label>2 · Componentize selection as…</label>
+      <p class="hint">For generic-named pieces (MomentCard, Sidebar, Button…): select the layer, type the name, run.</p>
+      <div class="row">
+        <input type="text" id="selname" placeholder="MomentCard" />
+        <button class="primary" id="sel">Componentize</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <label>3 · Auto-layout selection only</label>
+      <p class="hint">Apply auto-layout to already-made components/frames (no componentizing). Uses the toggles above for recursion.</p>
+      <button class="ghost" id="alonly">Auto-layout selection</button>
+    </div>
+
+    <div id="log">Ready.</div>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const post = (m) => parent.postMessage({ pluginMessage: m }, '*');
+      const opts = () => ({ autoLayout: $('al').checked, recursive: $('alrec').checked });
+
+      $('auto').onclick = () => {
+        let obj;
+        try { obj = JSON.parse($('map').value); } catch (e) { $('log').textContent = 'Map is not valid JSON.'; return; }
+        const map = Object.keys(obj).map((k) => ({ match: k, name: obj[k] }));
+        post({ type: 'auto', map, opts: opts() });
+      };
+      $('scan').onclick = () => post({ type: 'scan' });
+      $('sel').onclick = () => post({ type: 'selection', name: $('selname').value, opts: opts() });
+      $('alonly').onclick = () => post({ type: 'autolayout', opts: opts() });
+
+      onmessage = (e) => {
+        const msg = e.data.pluginMessage;
+        if (!msg) return;
+        if (msg.type === 'init') {
+          $('map').value = JSON.stringify(
+            msg.map.reduce((o, r) => ((o[r.match] = r.name), o), {}),
+            null, 2
+          );
+        }
+        if (msg.type === 'log') $('log').textContent = msg.log.join('\n');
+        if (msg.type === 'scan-result') {
+          $('log').textContent = 'Layer names (name × count):\n' +
+            msg.names.map((n) => n.count + '×  ' + n.name).join('\n');
+        }
+      };
+    </script>
+  </body>
+</html>

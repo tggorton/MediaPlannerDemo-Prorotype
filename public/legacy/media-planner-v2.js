@@ -14,6 +14,11 @@
 //   MP2_FEATURES.exportActivateButtons → "Export to IO" + "Activate via DSP"
 //        buttons on a saved media plan. Hidden for the Alpha (those features
 //        aren't live yet); flip to true to bring them back in a future version.
+//   MP2_FEATURES.savedPlanDspControls → DSP-tied controls on each saved media
+//        plan row in the "Media Plans" list: the "Refresh DSP" button, the
+//        status pill (Live / Pending / Error), and the DSP platform badge
+//        (DV360 / The Trade Desk / Xandr). These are future-state (beyond the
+//        sales demo); hidden by default, flip to true to bring them back.
 //
 // Styling for these may need a refresh when reintroduced — they were hidden
 // before a planned UX pass, not because the underlying functionality changed.
@@ -21,7 +26,8 @@ var MP2_FEATURES = {
   previousAnalysisTab:    false,
   adAnalysisTab:          false,
   aiMediaPlanTab:         false,
-  exportActivateButtons:  false
+  exportActivateButtons:  false,
+  savedPlanDspControls:   false
 };
 
 // ─── MUI Material Icons (legacy bridge) ───────────────────────────────────────
@@ -1051,9 +1057,10 @@ function mp2ShowUpload() {
         var cpmStr = mp.avgCpm ? ' &nbsp;·&nbsp; Avg. CPM ' + mp.avgCpm : (mp.dollars ? ' &nbsp;·&nbsp; ' + mp.dollars : '');
         var flightStr = (mp.flightStart && mp.flightEnd) ? ' &nbsp;·&nbsp; ' + mp.flightStart + ' → ' + mp.flightEnd : '';
 
-        // DSP badge
+        // DSP badge (DV360 / The Trade Desk / Xandr) — hidden for the demo.
+        // See MP2_FEATURES.savedPlanDspControls.
         var dspBadge = '';
-        if (mp.dsp && mp.dsp.name) {
+        if (MP2_FEATURES.savedPlanDspControls && mp.dsp && mp.dsp.name) {
           var dspCol = DSP_COLORS_V2[mp.dsp.name] || 'var(--muted)';
           dspBadge = '<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:2px 8px;white-space:nowrap;flex-shrink:0">'
             + '<span style="width:6px;height:6px;border-radius:50%;background:' + dspCol + ';flex-shrink:0"></span>'
@@ -1061,9 +1068,10 @@ function mp2ShowUpload() {
             + '</span>';
         }
 
-        // Status badge
+        // Status badge (Live / Pending / Error) — DSP-tied, hidden for the demo.
+        // See MP2_FEATURES.savedPlanDspControls.
         var statusBadge = '';
-        if (mp.dsp && mp.dsp.status) {
+        if (MP2_FEATURES.savedPlanDspControls && mp.dsp && mp.dsp.status) {
           var st = mp.dsp.status;
           var stCol = st === 'active'  ? '#16a34a' : st === 'pending' ? '#d97706' : '#dc2626';
           var stBg  = st === 'active'  ? '#f0fdf4' : st === 'pending' ? '#fffbeb' : '#fef2f2';
@@ -1076,9 +1084,12 @@ function mp2ShowUpload() {
         var IBTN = 'display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;color:var(--muted);transition:background .12s,color .12s;flex-shrink:0';
         var IHOV = 'onmouseenter="this.style.background=\'var(--bg)\';this.style.color=\'var(--text)\'" onmouseleave="this.style.background=\'transparent\';this.style.color=\'var(--muted)\'"';
         var IDELHOV = 'onmouseenter="this.style.background=\'#fef2f2\';this.style.color=\'#dc2626\';this.style.borderColor=\'#fecaca\'" onmouseleave="this.style.background=\'transparent\';this.style.color=\'var(--muted)\';this.style.borderColor=\'var(--border)\'"';
-        var btnRefresh = '<button data-mui-tip="Refresh DSP" onclick="mp2RefreshDSP(' + i + ',event)" style="' + IBTN + '" ' + IHOV + '>'
-          + mp2Icon('refresh', { size: 14 })
-          + '</button>';
+        // Refresh DSP — DSP-tied, hidden for the demo. See MP2_FEATURES.savedPlanDspControls.
+        var btnRefresh = MP2_FEATURES.savedPlanDspControls
+          ? '<button data-mui-tip="Refresh DSP" onclick="mp2RefreshDSP(' + i + ',event)" style="' + IBTN + '" ' + IHOV + '>'
+            + mp2Icon('refresh', { size: 14 })
+            + '</button>'
+          : '';
         var btnEdit = '<button data-mui-tip="Edit" onclick="mp2ShowMediaPlanDetail(' + i + ')" style="' + IBTN + '" ' + IHOV + '>'
           + mp2Icon('edit', { size: 14 })
           + '</button>';
@@ -1102,7 +1113,7 @@ function mp2ShowUpload() {
           + '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0;padding-left:12px">'
           +   dspBadge
           +   statusBadge
-          +   '<div style="width:1px;height:16px;background:var(--border);margin:0 2px"></div>'
+          +   (MP2_FEATURES.savedPlanDspControls ? '<div style="width:1px;height:16px;background:var(--border);margin:0 2px"></div>' : '')
           +   btnRefresh
           +   btnEdit
           +   btnDelete

@@ -28,7 +28,8 @@ new engineers/designers, or to drive a Figma reconstruction.
 | **Screens** | [`SCREENS.md`](SCREENS.md) | Page-by-page, tab-by-tab walkthrough (MVP). Layout regions, components used, behaviors. |
 | **Components** | [`COMPONENTS.md`](COMPONENTS.md) | Component catalog — anatomy, styling, states, file location. |
 | **UI Kit (starter)** | [`ui-kit/`](ui-kit/README.md) | A robust, standalone code design-system: tokens, an expanded MUI theme, reusable components, and a component **registry** for managing/accessing everything. Extends `kerv-one-theme`; the forward path for a shared kit. |
-| Figma (to follow) | external | A Figma reconstruction will be provided separately (built from these specs via MCP). |
+| **Figma extraction** | [`FIGMA-EXTRACTION.md`](FIGMA-EXTRACTION.md) | Manifest to rebuild the app in Figma 1:1 with the code/docs: screen capture list, componentization plan (+ variants), tokens→Figma styles, and the Code Connect labeling step. |
+| **Figma plugin** | [`figma-plugin/`](figma-plugin/README.md) | `KERV Componentizer` — a Figma dev plugin that converts html.to.design imports into named components matching the registry (auto by layer-name + a selection mode), with an optional **auto-layout** pass that infers axis/spacing/padding. |
 
 ## How to read it
 

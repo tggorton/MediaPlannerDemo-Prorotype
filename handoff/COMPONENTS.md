@@ -104,8 +104,14 @@ choices). Selected values render in `--text`; unset show "Select …" in muted.
 
 ### Saved-plan list row
 Row: input-type icon · name (13px/500) · meta (11px `--faint`, dot-separated) ·
-right action icon-buttons (refresh / edit / delete — 26px bordered, hover tint) ·
-optional DSP + status badges. Whole row (icon/name) is clickable → detail.
+right action icon-buttons (**edit / delete** — 26px bordered, hover tint). Whole
+row (icon/name) is clickable → detail.
+
+> **Future-state (hidden):** the **Refresh DSP** icon-button, the **status pill**
+> (Live / Pending / Error), and the **DSP platform badge** (DV360 / The Trade Desk
+> / Xandr) are DSP-tied and hidden for the demo
+> (`MP2_FEATURES.savedPlanDspControls`). Not part of the MVP hand-off; revealed by
+> "Expose future state". See the `feature-flags` skill.
 
 ---
 

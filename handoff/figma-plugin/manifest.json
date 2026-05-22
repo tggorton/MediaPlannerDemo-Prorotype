@@ -1,0 +1,9 @@
+{
+  "name": "KERV Componentizer",
+  "id": "kerv-componentizer-handoff",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": { "allowedDomains": ["none"] }
+}

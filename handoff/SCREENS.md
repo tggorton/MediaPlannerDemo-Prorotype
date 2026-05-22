@@ -95,8 +95,12 @@ See COMPONENTS → *Input toggle, Library Select, Lookback slider, AI param pick
 - Heading "Media Plans", then a **list of saved plans**. Each row: input-type
   icon (Video=`video-library`, Brief=`description`, VAST=`code`), plan name,
   meta line (date · author · flight dates · impressions · avg CPM · N moments),
-  and right-aligned action icon-buttons (refresh, **edit**, **delete**), plus an
-  optional DSP/status badge. Empty state: centered hint.
+  and right-aligned action icon-buttons (**edit**, **delete**). Empty state:
+  centered hint.
+  - *Future-state (hidden, `MP2_FEATURES.savedPlanDspControls`):* the **Refresh
+    DSP** button, the **status pill** (Live / Pending / Error), and the **DSP
+    platform badge** (DV360 / The Trade Desk / Xandr) — DSP-tied, excluded from
+    the MVP, revealed only via "Expose future state".
 - Clicking a row (or edit) opens **Your Media Plans** (2d).
 
 See COMPONENTS → *Saved-plan list row*.
